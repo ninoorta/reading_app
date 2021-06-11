@@ -78,24 +78,29 @@ class SearchScreen extends StatelessWidget {
                   children: [
                     Container(
                       child: Text(
-                          'Để tìm kiếm chính xác hơn, bạn cần thêm dấu nháy " " vào cụm từ tìm kiếm của mình.'),
+                        'Để tìm kiếm chính xác hơn, bạn cần thêm dấu nháy " " vào cụm từ tìm kiếm của mình.',
+                        style: TextStyle(fontSize: 16),
+                      ),
                       padding: EdgeInsets.symmetric(horizontal: 75),
                     ),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 75),
                       margin: EdgeInsets.symmetric(vertical: 20),
-                      child: GestureDetector(
-                        onTap: () {
-                          pushNewScreen(
-                            context,
-                            screen: FilterScreen(),
-                            withNavBar: false,
-                            // OPTIONAL VALUE. True by default.
-                            pageTransitionAnimation:
-                                PageTransitionAnimation.cupertino,
-                          );
-                        },
-                        child: Center(
+                      child: Center(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.white, elevation: 0),
+                          onPressed: () {
+                            print("click to move to filter screen");
+                            pushNewScreen(
+                              context,
+                              screen: FilterScreen(),
+                              withNavBar: false,
+                              // OPTIONAL VALUE. True by default.
+                              pageTransitionAnimation:
+                                  PageTransitionAnimation.cupertino,
+                            );
+                          },
                           child: Text(
                             "Tìm Với Bộ Lọc Truyện",
                             style: TextStyle(

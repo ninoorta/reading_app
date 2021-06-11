@@ -94,16 +94,16 @@ class _FilterScreenState extends State<FilterScreen> {
         ),
       ),
       backgroundColor: Colors.white,
-      persistentFooterButtons: [
-        Center(
-          child: TextButton(
-              style: ButtonStyle(),
-              onPressed: () {
-                print("press the filter btn");
-              },
-              child: Text("Filter")),
-        )
-      ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          print("user click to get filter result");
+        },
+        child: Icon(
+          Icons.filter_list,
+          color: Colors.white,
+          size: 35,
+        ),
+      ),
       body: Scrollbar(
         child: SingleChildScrollView(
           child: Container(

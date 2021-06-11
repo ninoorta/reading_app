@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cupertino_tabbar/cupertino_tabbar.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:reading_app/constants.dart';
 import 'package:reading_app/screens/search_screen.dart';
 import 'package:skeleton_text/skeleton_text.dart';
 
 import 'category_screen.dart';
 import 'explore_screen.dart';
+import 'filter_screen.dart';
 import 'history_screen.dart';
 
 class CategoryDetailScreen extends StatefulWidget {
@@ -96,48 +98,22 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
           ),
           actions: [
             IconButton(
-                onPressed: null,
+                onPressed: (){
+                  pushNewScreen(
+                    context,
+                    screen: FilterScreen(),
+                    withNavBar: false,
+                    // OPTIONAL VALUE. True by default.
+                    pageTransitionAnimation:
+                    PageTransitionAnimation.cupertino,
+                  );
+                },
                 icon: Icon(
                   Icons.filter_list,
                   color: Colors.blue,
                 ))
           ],
         ),
-        // bottomNavigationBar: BottomNavigationBar(
-        //   currentIndex: pageIndex,
-        //   selectedLabelStyle: TextStyle(height: 1.25),
-        //   onTap: (value) {
-        //     print("click bottom item $value");
-        //     setState(() {
-        //       pageIndex = value;
-        //
-        //       // if (value == 0) {
-        //       //   Navigator.pushNamed(context, "/category");
-        //       // }
-        //       // if (value == 1) {
-        //       //   Navigator.pushNamed(context, "/explore");
-        //       // }
-        //       // if (value == 2) {
-        //       //   Navigator.pushNamed(context, "/search");
-        //       // }
-        //       // if (value == 3) {
-        //       //   Navigator.pushNamed(context, "/history");
-        //       // }
-        //
-        //
-        //     });
-        //   },
-        //   items: [
-        //     BottomNavigationBarItem(icon: Icon(Icons.apps), label: "Thể loại"),
-        //     BottomNavigationBarItem(
-        //         icon: Icon(Icons.explore), label: "Khám phá"),
-        //     BottomNavigationBarItem(
-        //         icon: Icon(Icons.search), label: "Tìm Truyện"),
-        //     BottomNavigationBarItem(
-        //         icon: Icon(Icons.history), label: "Lịch sử"),
-        //   ],
-        //   type: BottomNavigationBarType.fixed,
-        // ),
         body: Container(
           color: Colors.white,
           child: TabBarView(

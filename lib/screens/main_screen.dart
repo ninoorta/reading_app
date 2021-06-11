@@ -16,19 +16,19 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   PersistentTabController _controller =
-      PersistentTabController(initialIndex: 0);
+      PersistentTabController(initialIndex: 1);
 
-  int pageIndex = 0;
+  // int pageIndex = 0;
 
-  List<Widget> pageList = [
-    CategoryScreen(),
-    ExploreScreen(),
-    SearchScreen(),
-    HistoryScreen()
-  ];
+  // List<Widget> pageList = [
+  //   CategoryScreen(),
+  //   ExploreScreen(),
+  //   SearchScreen(),
+  //   HistoryScreen()
+  // ];
 
   List<Widget> _buildScreens() {
-    return [CategoryScreen(), ExploreScreen(), SearchScreen(), HistoryScreen()];
+    return [CategoryScreen(),ExploreScreen(),  SearchScreen(), HistoryScreen()];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
@@ -114,36 +114,5 @@ class _MainScreenState extends State<MainScreen> {
       ),
       navBarStyle: NavBarStyle.style6,
     );
-
-    // return Scaffold(
-    //   // body: pageList[pageIndex],
-    //   body: PageTransitionSwitcher(
-    //     transitionBuilder: (child, primaryAnimation, secondaryAnimation) =>
-    //         FadeThroughTransition(
-    //       animation: primaryAnimation,
-    //       secondaryAnimation: secondaryAnimation,
-    //       child: child,
-    //     ),
-    //     child: pageList[pageIndex],
-    //   ),
-    //   bottomNavigationBar: BottomNavigationBar(
-    //     currentIndex: pageIndex,
-    //     selectedLabelStyle: TextStyle(height: 1.25),
-    //     onTap: (value) {
-    //       setState(() {
-    //         pageIndex = value;
-    //       });
-    //     },
-    //     items: [
-    //       BottomNavigationBarItem(icon: Icon(Icons.apps), label: "Thể loại"),
-    //       BottomNavigationBarItem(icon: Icon(Icons.explore), label: "Khám phá"),
-    //       BottomNavigationBarItem(
-    //           icon: Icon(Icons.search), label: "Tìm Truyện"),
-    //       BottomNavigationBarItem(icon: Icon(Icons.history), label: "Lịch sử"),
-    //     ],
-    //     type: BottomNavigationBarType.fixed,
-    //
-    //   ),
-    // );
   }
 }
