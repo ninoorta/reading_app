@@ -1,13 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:reading_app/screens/category_screen.dart';
-import 'package:reading_app/screens/history_screen.dart';
-import 'package:reading_app/screens/explore_screen.dart';
-import 'package:reading_app/screens/search_screen.dart';
-
-import 'package:animations/animations.dart';
-
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:reading_app/screens/category/category_screen.dart';
+import 'package:reading_app/screens/explore/explore_screen.dart';
+import 'package:reading_app/screens/history/history_screen.dart';
+import 'package:reading_app/screens/search/search_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -28,7 +25,14 @@ class _MainScreenState extends State<MainScreen> {
   // ];
 
   List<Widget> _buildScreens() {
-    return [CategoryScreen(),ExploreScreen(),  SearchScreen(), HistoryScreen()];
+    return [
+      CategoryScreen(
+        fromOtherRoute: false,
+      ),
+      ExploreScreen(),
+      SearchScreen(),
+      HistoryScreen()
+    ];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {

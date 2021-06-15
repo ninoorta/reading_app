@@ -7,14 +7,11 @@ const kSubTitleTextStyle =
 const kTitleTextStyle =
     TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold);
 
-const kFilterTitleTextStyle = TextStyle(
-    color:  Colors.black45,
-    fontSize: 16,
-    fontWeight: FontWeight.w400
-);
+const kMediumBlackTitleTextStyle =
+    TextStyle(color: Colors.black45, fontSize: 16, fontWeight: FontWeight.w400);
 
-const kListTitleTextStyle = TextStyle(
-  fontSize: 16,
-  color: Colors.black,
-  fontWeight: FontWeight.w600
-);
+const kMediumDarkerTitleTextStyle =
+    TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.w400);
+
+const kListTitleTextStyle =
+    TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.w600);

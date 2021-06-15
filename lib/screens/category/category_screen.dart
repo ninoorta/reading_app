@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:reading_app/screens/category_detail_screen.dart';
-
-import 'main_screen.dart';
+import 'package:reading_app/screens/category/category_detail_screen.dart';
 
 class CategoryScreen extends StatefulWidget {
+  CategoryScreen({required this.fromOtherRoute});
+
+  final bool fromOtherRoute;
+
   @override
   _CategoryScreenState createState() => _CategoryScreenState();
 }
@@ -86,6 +88,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("from other route? ${widget.fromOtherRoute}");
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -97,6 +106,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
           centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.white,
+          leading: widget.fromOtherRoute
+              ? BackButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  color: Colors.blue,
+                )
+              : null,
         ),
         body: Scrollbar(
           child: Container(

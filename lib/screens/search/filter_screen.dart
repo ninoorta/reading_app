@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:reading_app/components/multiple_choice_chip.dart';
-import 'package:reading_app/components/single_choice_chip.dart';
 import 'package:reading_app/constants.dart';
-import 'package:smart_select/smart_select.dart';
+import 'package:reading_app/screens/search/components/multiple_choice_chip.dart';
+import 'package:reading_app/screens/search/components/single_choice_chip.dart';
 
 class FilterScreen extends StatefulWidget {
   @override
@@ -120,7 +119,7 @@ class _FilterScreenState extends State<FilterScreen> {
                       children: [
                         Text(
                           "Trạng thái".toUpperCase(),
-                          style: kFilterTitleTextStyle,
+                          style: kMediumBlackTitleTextStyle,
                         ),
                         SizedBox(
                           height: 5,
@@ -141,7 +140,7 @@ class _FilterScreenState extends State<FilterScreen> {
                       children: [
                         Text(
                           "Số chương".toUpperCase(),
-                          style: kFilterTitleTextStyle,
+                          style: kMediumBlackTitleTextStyle,
                         ),
                         SizedBox(
                           height: 5,
@@ -162,7 +161,7 @@ class _FilterScreenState extends State<FilterScreen> {
                       children: [
                         Text(
                           "Sắp xếp".toUpperCase(),
-                          style: kFilterTitleTextStyle,
+                          style: kMediumBlackTitleTextStyle,
                         ),
                         SizedBox(
                           height: 5,
@@ -183,7 +182,7 @@ class _FilterScreenState extends State<FilterScreen> {
                       children: [
                         Text(
                           "Thể loại".toUpperCase(),
-                          style: kFilterTitleTextStyle,
+                          style: kMediumBlackTitleTextStyle,
                         ),
                         SizedBox(
                           height: 5,

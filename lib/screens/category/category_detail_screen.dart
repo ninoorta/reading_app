@@ -1,15 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cupertino_tabbar/cupertino_tabbar.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:reading_app/constants.dart';
-import 'package:reading_app/screens/search_screen.dart';
 import 'package:skeleton_text/skeleton_text.dart';
 
-import 'category_screen.dart';
-import 'explore_screen.dart';
-import 'filter_screen.dart';
-import 'history_screen.dart';
+import '../search/filter_screen.dart';
 
 class CategoryDetailScreen extends StatefulWidget {
   @override
@@ -91,21 +86,20 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
             ],
           ),
           leading: BackButton(
-            color: Colors.black,
+            color: Colors.blue,
             onPressed: () {
               Navigator.pop(context);
             },
           ),
           actions: [
             IconButton(
-                onPressed: (){
+                onPressed: () {
                   pushNewScreen(
                     context,
                     screen: FilterScreen(),
                     withNavBar: false,
                     // OPTIONAL VALUE. True by default.
-                    pageTransitionAnimation:
-                    PageTransitionAnimation.cupertino,
+                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
                   );
                 },
                 icon: Icon(
@@ -127,7 +121,9 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
                     itemCount: 10,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return isLoading ? MyCustomTileSkeleton() : MyCustomTile();
+                      return isLoading
+                          ? MyCustomTileSkeleton()
+                          : MyCustomTile();
                     },
                   ),
                 ),

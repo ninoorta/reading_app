@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:reading_app/screens/filter_screen.dart';
+import 'package:reading_app/screens/search/filter_screen.dart';
 
 class SearchScreen extends StatelessWidget {
   @override

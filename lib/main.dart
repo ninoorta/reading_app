@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:reading_app/screens/category_detail_screen.dart';
-import 'package:reading_app/screens/category_screen.dart';
-import 'package:reading_app/screens/filter_screen.dart';
-import 'package:reading_app/screens/history_screen.dart';
+import 'package:reading_app/screens/category/category_detail_screen.dart';
+import 'package:reading_app/screens/category/category_screen.dart';
+import 'package:reading_app/screens/history/history_screen.dart';
 import 'package:reading_app/screens/main_screen.dart';
-import 'package:reading_app/screens/search_screen.dart';
-import 'screens/explore_screen.dart';
+import 'package:reading_app/screens/search/filter_screen.dart';
+import 'package:reading_app/screens/search/search_screen.dart';
+
+import 'screens/explore/explore_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,7 +29,9 @@ class MyApp extends StatelessWidget {
         "/search": (context) => SearchScreen(),
         "/history": (context) => HistoryScreen(),
         "/filter": (context) => FilterScreen(),
-        "/category": (context) => CategoryScreen(),
+        "/category": (context) => CategoryScreen(
+              fromOtherRoute: false,
+            ),
         "/categoryDetail": (context) => CategoryDetailScreen()
       },
     );
