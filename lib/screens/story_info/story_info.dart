@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:reading_app/constants.dart';
 import 'package:reading_app/screens/story_info/components/single_choice_chip_for_link.dart';
+import 'package:reading_app/screens/story_info/menu_chapters_screen.dart';
 
 class StoryInfo extends StatefulWidget {
   const StoryInfo({Key? key}) : super(key: key);
@@ -102,7 +104,13 @@ class _StoryInfoState extends State<StoryInfo> {
                     borderRadius: BorderRadius.circular(15.0)),
               ),
               RawMaterialButton(
-                onPressed: null,
+                onPressed: () {
+                  pushNewScreen(context,
+                      screen: MenuChapters(),
+                      withNavBar: false,
+                      pageTransitionAnimation:
+                          PageTransitionAnimation.cupertino);
+                },
                 child: Column(
                   // mainAxisAlignment: MainAxisAlignment.center,
                   // crossAxisAlignment: CrossAxisAlignment.center,
@@ -135,7 +143,7 @@ class _StoryInfoState extends State<StoryInfo> {
                   "This is a text for test but it's so longggggggggggggggggggggggggggggggggggggggg";
             });
           } else if (_scrollController.position.pixels == 0 ||
-              _scrollController.position.pixels < 10) {
+              _scrollController.position.pixels < 30) {
             setState(() {
               testText = "";
             });
