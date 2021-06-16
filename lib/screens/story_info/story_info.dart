@@ -5,7 +5,9 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:reading_app/constants.dart';
 import 'package:reading_app/screens/story_info/components/single_choice_chip_for_link.dart';
+import 'package:reading_app/screens/story_info/download_screen.dart';
 import 'package:reading_app/screens/story_info/menu_chapters_screen.dart';
+import 'package:reading_app/screens/story_info/reading_screen.dart';
 
 class StoryInfo extends StatefulWidget {
   const StoryInfo({Key? key}) : super(key: key);
@@ -65,7 +67,13 @@ class _StoryInfoState extends State<StoryInfo> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               RawMaterialButton(
-                onPressed: null,
+                onPressed: () {
+                  pushNewScreen(context,
+                      screen: DownloadScreen(),
+                      withNavBar: false,
+                      pageTransitionAnimation:
+                          PageTransitionAnimation.cupertino);
+                },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -88,6 +96,10 @@ class _StoryInfoState extends State<StoryInfo> {
               RawMaterialButton(
                 onPressed: () {
                   print("user want to read this one");
+
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return ReadingScreen();
+                  }));
                 },
                 child: Text(
                   "Đọc truyện",
@@ -112,8 +124,6 @@ class _StoryInfoState extends State<StoryInfo> {
                           PageTransitionAnimation.cupertino);
                 },
                 child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.center,
-                  // crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Icon(
                       Icons.menu,

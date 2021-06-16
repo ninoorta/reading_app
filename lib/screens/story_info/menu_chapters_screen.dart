@@ -51,8 +51,11 @@ class MenuChapters extends StatelessWidget {
               color: Colors.white,
               child: Center(
                   child: Text(
-                "1/2",
-                style: TextStyle(color: Colors.blue, fontSize: 22),
+                "1 / 2",
+                style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500),
               )),
             ),
             IconButton(
