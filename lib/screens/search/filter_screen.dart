@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:reading_app/constants.dart';
 import 'package:reading_app/screens/search/components/multiple_choice_chip.dart';
 import 'package:reading_app/screens/search/components/single_choice_chip.dart';
+import 'package:reading_app/screens/search/filter_result_screen.dart';
 
 class FilterScreen extends StatefulWidget {
   @override
@@ -96,6 +98,11 @@ class _FilterScreenState extends State<FilterScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           print("user click to get filter result");
+
+          pushNewScreen(context,
+              screen: FilterResultScreen(),
+              withNavBar: false,
+              pageTransitionAnimation: PageTransitionAnimation.cupertino);
         },
         child: Icon(
           Icons.filter_list,
@@ -104,10 +111,13 @@ class _FilterScreenState extends State<FilterScreen> {
         ),
       ),
       body: Scrollbar(
+        thickness: 5,
+        interactive: true,
         child: SingleChildScrollView(
           child: Container(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              // padding: EdgeInsets.zero,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -5,7 +5,7 @@ const kSubTitleTextStyle =
     TextStyle(fontSize: 14, color: Colors.black45, fontWeight: FontWeight.w500);
 
 const kTitleTextStyle =
-    TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold);
+    TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold);
 
 const kMediumBlackTitleTextStyle =
     TextStyle(color: Colors.black45, fontSize: 16, fontWeight: FontWeight.w400);
