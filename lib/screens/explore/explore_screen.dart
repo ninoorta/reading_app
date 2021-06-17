@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:reading_app/constants.dart';
 import 'package:reading_app/screens/category/category_screen.dart';
+// services
+import 'package:reading_app/services/explore_screen_service.dart';
 
 import 'components/build_skeleton_type_item.dart';
 import 'components/build_type_item.dart';
@@ -15,16 +17,41 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen> {
   bool isLoading = true;
+  dynamic exploreScreenData = {};
+  List newStories = [];
+  List recentUpdatedStories = [];
+
+  final List<String> typeList = [
+    "Ngôn Tình",
+    "Đam Mỹ",
+    "Ngược",
+    "Sủng",
+    "Xuyên Không",
+    "Đô Thị"
+  ];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    Future.delayed(Duration(seconds: 5), () {
-      setState(() {
-        this.isLoading = false;
-      });
+    // Future.delayed(Duration(seconds: 5), () {
+    //   setState(() {
+    //     this.isLoading = false;
+    //   });
+    // });
+
+    getData();
+  }
+
+  void getData() async {
+    exploreScreenData = await ExploreScreenService().getData();
+    // print(exploreScreenData);
+    newStories = exploreScreenData["new"];
+    recentUpdatedStories = exploreScreenData["updated"];
+
+    setState(() {
+      this.isLoading = false;
     });
   }
 
@@ -48,10 +75,21 @@ class _ExploreScreenState extends State<ExploreScreen> {
           margin: EdgeInsets.only(bottom: 15.0),
           child: Column(
             children: [
-              CustomListView(listName: "Mới đăng", isLoading: isLoading),
-              CustomListView(listName: "Đọc nhiều", isLoading: isLoading),
               CustomListView(
-                  listName: "Truyện đọc gần đây", isLoading: isLoading),
+                listName: "Mới đăng",
+                isLoading: isLoading,
+                listData: newStories,
+              ),
+              CustomListView(
+                listName: "Mới cập nhật",
+                isLoading: isLoading,
+                listData: recentUpdatedStories,
+              ),
+              // later
+              // CustomListView(
+              //     listName: "Truyện đọc gần đây", isLoading: isLoading),
+              // later
+
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -86,11 +124,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           mainAxisExtent: 50,
                           crossAxisSpacing: 15.0,
                           mainAxisSpacing: 15.0),
-                      itemCount: 6,
+                      itemCount: typeList.length,
                       itemBuilder: (context, index) {
+                        var currentType = typeList[index];
                         return isLoading
                             ? BuildSkeletonTypeItem()
-                            : BuildTypeItem();
+                            : BuildTypeItem(
+                                type: currentType,
+                              );
                       },
                     ),
                   ),

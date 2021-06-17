@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class BuildTypeItem extends StatelessWidget {
-  const BuildTypeItem({Key? key}) : super(key: key);
+  const BuildTypeItem({Key? key, required this.type}) : super(key: key);
+
+  final String type;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,7 @@ class BuildTypeItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Hello",
+            type,
             style: TextStyle(
               color: CupertinoColors.black,
               fontSize: 16,
