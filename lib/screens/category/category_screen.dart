@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import "package:reading_app/extensions.dart";
 import 'package:reading_app/screens/category/category_detail_screen.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -62,10 +63,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
             );
           },
           child: Card(
-            elevation: 3,
+            shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.black54),
+                borderRadius: BorderRadius.circular(10.0)),
+            elevation: 0,
             child: Center(
                 child: Text(
-              category,
+              category.capitalize(),
               style: TextStyle(color: Colors.black, fontSize: 15),
             )),
           ));

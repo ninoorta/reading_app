@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reading_app/screens/history/history_detail_screen.dart';
 
 import '../../constants.dart';
 
@@ -68,6 +69,10 @@ class BuildHistoryList extends StatelessWidget {
             IconButton(
               onPressed: () {
                 print("user click to see more");
+
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return HistoryDetail();
+                }));
               },
               icon: Icon(Icons.arrow_forward_ios),
               iconSize: 20,
