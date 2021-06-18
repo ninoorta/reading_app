@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SingleChoiceChipForLink extends StatefulWidget {
-  final List<String> list;
+  final List list;
 
   SingleChoiceChipForLink(this.list);
 

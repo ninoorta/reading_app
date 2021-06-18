@@ -7,7 +7,7 @@ import 'package:reading_app/screens/story_info/story_info.dart';
 class BuildListItem extends StatelessWidget {
   Map item;
 
-  BuildListItem(this.item);
+  BuildListItem({required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,9 @@ class BuildListItem extends StatelessWidget {
             print("click to move to its story info.");
 
             pushNewScreen(context,
-                screen: StoryInfo(),
+                screen: StoryInfo(
+                  storyID: item["_id"]["\$oid"],
+                ),
                 withNavBar: false,
                 pageTransitionAnimation: PageTransitionAnimation.cupertino);
           },

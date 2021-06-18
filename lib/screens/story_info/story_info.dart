@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -8,47 +9,117 @@ import 'package:reading_app/screens/story_info/components/single_choice_chip_for
 import 'package:reading_app/screens/story_info/download_screen.dart';
 import 'package:reading_app/screens/story_info/menu_chapters_screen.dart';
 import 'package:reading_app/screens/story_info/reading_screen.dart';
+// services
+import "package:reading_app/services/story_info_screen_service.dart";
+import 'package:reading_app/utilities/time.dart';
 
 class StoryInfo extends StatefulWidget {
-  const StoryInfo({Key? key}) : super(key: key);
+  StoryInfo({Key? key, required this.storyID}) : super(key: key);
+  String storyID = "";
 
   @override
   _StoryInfoState createState() => _StoryInfoState();
 }
 
 class _StoryInfoState extends State<StoryInfo> {
-  List<String> testTypeList = [
-    "Ngôn tình",
-    "Xuyên không",
-    "Cổ đại",
-    "Ngôn tình2",
-    "Xuyên không2",
-    "Cổ đại2",
-  ];
+  //
+  // List<String> testTypeList = [
+  //   "Ngôn tình",
+  //   "Xuyên không",
+  //   "Cổ đại",
+  //   "Ngôn tình2",
+  //   "Xuyên không2",
+  //   "Cổ đại2",
+  // ];
+
+  bool isLoading = true;
+
+  Map storyData = {};
+
+  String storyTitleAppbar = "";
+  String storyTitle = "";
+  String storyImageCoverURL = "";
+  String storyAuthor = "";
+  String storyStatus = "";
+  String storyRecentPostTime = "";
+  int storyChapters = 0;
+  int storyFavoriteCount = 0;
+  int storyViewedCount = 0;
+
+  List storyGenres = [];
+
+  String storySource = "";
+
+  String storyDescription = "";
 
   ScrollController _scrollController = ScrollController();
 
   String testText = "";
 
+  Map timeData = {};
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    print("storyID: ${widget.storyID}");
+    getData();
+  }
+
+  void getData() async {
+    storyData = await StoreInfoScreenService(storeID: widget.storyID).getData();
+
+    timeData = Time().convertTimeToDHMS(
+        startTime: storyData["created"], endTime: storyData["updated"]);
+
+    setState(() {
+      isLoading = false;
+
+      if (timeData["days"] == 0) {
+        storyRecentPostTime = "${timeData["hours"]} giờ trước";
+        if (timeData["hours"] == 0) {
+          storyRecentPostTime = "${timeData["minutes"]} phút trước";
+          if (timeData["minutes"] == 0) {
+            storyRecentPostTime = "Vừa mới đây";
+          }
+        }
+      } else {
+        storyRecentPostTime = "${timeData["days"]} ngày trước";
+      }
+
+      storyTitle = storyData["title"];
+      storyAuthor = storyData["author"];
+      storyStatus = storyData["full"] ? "FULL" : "Đang ra";
+
+      storyChapters = storyData["chapter_count"];
+      storyFavoriteCount = storyData["like_count"] ?? storyFavoriteCount;
+      storyViewedCount = storyData["view_count"] ?? storyViewedCount;
+      storyGenres = storyData["genre"];
+
+      storyImageCoverURL = storyData["cover"];
+
+      storySource = storyData["source"];
+      storyDescription = storyData["desc"];
+    });
+
+    // debugPrint(storyData.toString(), wrapWidth: 1024);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: RichText(
           overflow: TextOverflow.ellipsis,
           text: TextSpan(children: [
             TextSpan(
-                text: testText,
+                text: storyTitleAppbar,
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16))
+                    fontSize: 22))
           ]),
         ),
         leading: BackButton(
@@ -98,7 +169,10 @@ class _StoryInfoState extends State<StoryInfo> {
                   print("user want to read this one");
 
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return ReadingScreen();
+                    return ReadingScreen(
+                        storyTitle: storyTitle,
+                        storyID: widget.storyID,
+                        chapterCount: storyChapters);
                   }));
                 },
                 child: Text(
@@ -118,7 +192,11 @@ class _StoryInfoState extends State<StoryInfo> {
               RawMaterialButton(
                 onPressed: () {
                   pushNewScreen(context,
-                      screen: MenuChapters(),
+                      screen: MenuChapters(
+                        storyTitle: storyTitle,
+                        storyID: widget.storyID,
+                        chaptersCount: storyChapters,
+                      ),
                       withNavBar: false,
                       pageTransitionAnimation:
                           PageTransitionAnimation.cupertino);
@@ -144,219 +222,264 @@ class _StoryInfoState extends State<StoryInfo> {
           ),
         )
       ],
-      body: NotificationListener<ScrollEndNotification>(
-        onNotification: (notification) {
-          // print(_scrollController.position.pixels);
-          if (_scrollController.position.pixels > 35) {
-            setState(() {
-              testText =
-                  "This is a text for test but it's so longggggggggggggggggggggggggggggggggggggggg";
-            });
-          } else if (_scrollController.position.pixels == 0 ||
-              _scrollController.position.pixels < 30) {
-            setState(() {
-              testText = "";
-            });
-          }
-          return true;
-        },
-        child: Scrollbar(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            controller: _scrollController,
-            child: Container(
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 15.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Tên truyện", style: kTitleTextStyle),
-                    ],
+      body: isLoading
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Center(
+                    child: Text(
+                      "Đang tải...",
+                      style: TextStyle(color: Colors.black, fontSize: 22),
+                    ),
                   ),
-                  SizedBox(
-                    height: 30.0,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(
-                        flex: 3,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          // mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            RichText(
-                              text: new TextSpan(children: [
-                                new TextSpan(
-                                    text: "Tác giả:  ",
-                                    style: kMediumDarkerTitleTextStyle),
-                                new TextSpan(
-                                    text: "Author name",
-                                    style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600),
-                                    recognizer: new TapGestureRecognizer()
-                                      ..onTap = () {
-                                        print("click author name");
-                                      })
-                              ]),
-                            ),
-                            SizedBox(
-                              height: 2.0,
-                            ),
-                            CustomRichText(
-                                title: "Tình trạng", titleValue: "Đang ra"),
-                            SizedBox(
-                              height: 2.0,
-                            ),
-                            CustomRichText(
-                                title: "Đăng gần nhất",
-                                titleValue: "15 phút trước"),
-                            SizedBox(
-                              height: 2.0,
-                            ),
-                            CustomRichText(
-                                title: "Số chương", titleValue: "20"),
-                            SizedBox(
-                              height: 2.0,
-                            ),
-                            CustomRichText(
-                                title: "Lượt yêu thích", titleValue: "20"),
-                            SizedBox(
-                              height: 2.0,
-                            ),
-                            CustomRichText(
-                                title: "Số người đã đọc", titleValue: "20009"),
+                )
+              ],
+            )
+          : NotificationListener<ScrollEndNotification>(
+              onNotification: (notification) {
+                // print(_scrollController.position.pixels);
+                if (_scrollController.position.pixels > 35) {
+                  setState(() {
+                    storyTitleAppbar = storyTitle;
+                  });
+                } else if (_scrollController.position.pixels == 0 ||
+                    _scrollController.position.pixels < 30) {
+                  setState(() {
+                    storyTitleAppbar = "";
+                  });
+                }
+                return true;
+              },
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  controller: _scrollController,
+                  child: Container(
+                    color: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Center(
+                                child: RichText(
+                                    softWrap: true,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 4,
+                                    text: TextSpan(children: [
+                                      new TextSpan(
+                                          text: storyTitle,
+                                          style: kTitleTextStyle)
+                                    ])),
+                              ),
+                            )
                           ],
                         ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          width: 50,
-                          height: 100,
-                          color: Colors.grey,
+                        SizedBox(
+                          height: 25.0,
                         ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 5.0,
-                  ),
-                  SingleChoiceChipForLink(testTypeList),
-                  SizedBox(height: 20.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      RawMaterialButton(
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        constraints:
-                            BoxConstraints(minWidth: 35.0, minHeight: 35.0),
-                        onPressed: () {
-                          print("user choose this as favorite one");
-                        },
-                        elevation: 1.0,
-                        fillColor: Colors.white,
-                        splashColor: Colors.lightBlue[200],
-                        padding: EdgeInsets.zero,
-                        child: Icon(
-                          Icons.favorite_border,
-                          size: 25.0,
-                          color: Colors.blue,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Expanded(
+                              flex: 3,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                // mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  RichText(
+                                    text: new TextSpan(children: [
+                                      new TextSpan(
+                                          text: "Tác giả: ",
+                                          style: kMediumDarkerTitleTextStyle),
+                                      new TextSpan(
+                                          text: storyAuthor,
+                                          style: TextStyle(
+                                              color: Colors.blue,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600),
+                                          recognizer: new TapGestureRecognizer()
+                                            ..onTap = () {
+                                              print("click author name");
+                                            })
+                                    ]),
+                                  ),
+                                  SizedBox(
+                                    height: 2.0,
+                                  ),
+                                  CustomRichText(
+                                      title: "Tình trạng",
+                                      titleValue: storyStatus),
+                                  SizedBox(
+                                    height: 2.0,
+                                  ),
+                                  CustomRichText(
+                                      title: "Đăng gần nhất",
+                                      titleValue: storyRecentPostTime),
+                                  SizedBox(
+                                    height: 2.0,
+                                  ),
+                                  CustomRichText(
+                                      title: "Số chương",
+                                      titleValue: storyChapters.toString()),
+                                  SizedBox(
+                                    height: 2.0,
+                                  ),
+                                  CustomRichText(
+                                      title: "Lượt yêu thích",
+                                      titleValue:
+                                          storyFavoriteCount.toString()),
+                                  SizedBox(
+                                    height: 2.0,
+                                  ),
+                                  CustomRichText(
+                                      title: "Số người đã đọc",
+                                      titleValue: storyViewedCount.toString()),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: 50,
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  child: CachedNetworkImage(
+                                    imageUrl: storyImageCoverURL,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
                         ),
-                        shape:
-                            CircleBorder(side: BorderSide(color: Colors.blue)),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      RawMaterialButton(
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        constraints:
-                            BoxConstraints(minWidth: 35.0, minHeight: 35.0),
-                        onPressed: () {
-                          print("user choose this to write some comments");
-                        },
-                        elevation: 1.0,
-                        fillColor: Colors.white,
-                        splashColor: Colors.lightBlue[200],
-                        padding: EdgeInsets.zero,
-                        child: Icon(
-                          Icons.rate_review_outlined,
-                          size: 25.0,
-                          color: Colors.blue,
+                        SizedBox(
+                          height: 5.0,
                         ),
-                        shape:
-                            CircleBorder(side: BorderSide(color: Colors.blue)),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      RawMaterialButton(
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        constraints:
-                            BoxConstraints(minWidth: 35.0, minHeight: 35.0),
-                        onPressed: () {
-                          print("user choose this to share");
-                        },
-                        elevation: 1.0,
-                        fillColor: Colors.white,
-                        splashColor: Colors.lightBlue[200],
-                        padding: EdgeInsets.zero,
-                        child: Icon(
-                          Icons.share,
-                          size: 25.0,
-                          color: Colors.blue,
+                        SingleChoiceChipForLink(storyGenres),
+                        SizedBox(height: 20.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            RawMaterialButton(
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                              constraints: BoxConstraints(
+                                  minWidth: 35.0, minHeight: 35.0),
+                              onPressed: () {
+                                print("user choose this as favorite one");
+                              },
+                              elevation: 1.0,
+                              fillColor: Colors.white,
+                              splashColor: Colors.lightBlue[200],
+                              padding: EdgeInsets.zero,
+                              child: Icon(
+                                Icons.favorite_border,
+                                size: 25.0,
+                                color: Colors.blue,
+                              ),
+                              shape: CircleBorder(
+                                  side: BorderSide(color: Colors.blue)),
+                            ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                            RawMaterialButton(
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                              constraints: BoxConstraints(
+                                  minWidth: 35.0, minHeight: 35.0),
+                              onPressed: () {
+                                print(
+                                    "user choose this to write some comments");
+                              },
+                              elevation: 1.0,
+                              fillColor: Colors.white,
+                              splashColor: Colors.lightBlue[200],
+                              padding: EdgeInsets.zero,
+                              child: Icon(
+                                Icons.rate_review_outlined,
+                                size: 25.0,
+                                color: Colors.blue,
+                              ),
+                              shape: CircleBorder(
+                                  side: BorderSide(color: Colors.blue)),
+                            ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                            RawMaterialButton(
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                              constraints: BoxConstraints(
+                                  minWidth: 35.0, minHeight: 35.0),
+                              onPressed: () {
+                                print("user choose this to share");
+                              },
+                              elevation: 1.0,
+                              fillColor: Colors.white,
+                              splashColor: Colors.lightBlue[200],
+                              padding: EdgeInsets.zero,
+                              child: Icon(
+                                Icons.share,
+                                size: 25.0,
+                                color: Colors.blue,
+                              ),
+                              shape: CircleBorder(
+                                  side: BorderSide(color: Colors.blue)),
+                            ),
+                          ],
                         ),
-                        shape:
-                            CircleBorder(side: BorderSide(color: Colors.blue)),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  RichText(
-                      text: TextSpan(children: [
-                    new TextSpan(
-                        text: "Nguồn: ",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16)),
-                    new TextSpan(
-                        text: "Sưu tầm",
-                        style: TextStyle(color: Colors.black, fontSize: 16))
-                  ])),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  // content
+                        SizedBox(
+                          height: 20,
+                        ),
+                        RichText(
+                            text: TextSpan(children: [
+                          new TextSpan(
+                              text: "Nguồn: ",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16)),
+                          new TextSpan(
+                              text: storySource,
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 16))
+                        ])),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        // content
 
-                  Html(
-                      style: {
-                        "body": Style(
-                            color: Colors.black,
-                            fontSize: FontSize.rem(1.15),
-                            padding: EdgeInsets.zero,
-                            margin: EdgeInsets.zero)
-                      },
-                      data:
-                          "<b>Giới thiệu<br><br></b>Vũ Nhạc chỉ là vô tình bị ép nhận một chiếc vòng tay gắn chuông, không ngờ thế mà sau đó cô bị cuốn vào vô số phiền toái.<br><br>Không phải nói là vòng tay may mắn sao, sao cô thấy từ ngày mang nó, cô càng xui xẻo hơn vậy, đã thế còn dính vào một vụ cướp, sau đó, cô bị bắt làm con tin.<br><br>Và, như đã nói, cô ngày càng xui xẻo, chính vì thế, cô chết, bị một tên cảnh sát chả ra gì bắn nhầm, chết thẳng cẳng.<br><br>Tưởng mình được lên thiên đàng, nhưng không, bị một hệ thống vô dụng trói định, sau đó sai bảo cô đi làm nhiệm vụ.<br><br>Biết làm sao giờ, người ở dưới mái hiên, đành phải cúi đầu thôi.<br><br>Vì vậy, cô đành phải cố gắng hết mức, đi công lược các mục tiêu, ráng hoàn thành nhiệm vụ.<br><br>Nhưng mà hệ thống này là giả phải không? <br><br>VÔ DỤNG!<br><br>QUÁ VÔ DỤNG!!!!<br><br>Hệ thống đâu lăn ra cho bà!"),
-                  SizedBox(
-                    height: 20,
-                  )
-                ],
+                        Html(style: {
+                          "body": Style(
+                              color: Colors.black,
+                              fontSize: FontSize.rem(1.15),
+                              padding: EdgeInsets.zero,
+                              margin: EdgeInsets.zero)
+                        }, data: storyDescription),
+
+                        SizedBox(
+                          height: 20,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }

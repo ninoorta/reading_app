@@ -5,16 +5,16 @@ import 'build_list_item.dart';
 import 'build_skeleton_list_item.dart';
 
 class CustomListView extends StatelessWidget {
-  CustomListView(
-      {Key? key,
-      required this.isLoading,
-      required this.listName,
-      this.listData})
-      : super(key: key);
+  CustomListView({
+    Key? key,
+    required this.isLoading,
+    required this.listName,
+    required this.listData,
+  }) : super(key: key);
 
   final bool isLoading;
   final String listName;
-  List? listData;
+  List listData;
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +43,13 @@ class CustomListView extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             shrinkWrap: true,
-            itemCount: isLoading ? 10 : listData!.length,
+            itemCount: isLoading ? 10 : listData.length,
             itemBuilder: (context, index) {
               return isLoading
                   ? BuildSkeletonItem()
-                  : BuildListItem(listData![index]);
+                  : BuildListItem(
+                      item: listData[index],
+                    );
             },
           ),
         )
