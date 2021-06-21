@@ -3,7 +3,23 @@ import 'package:intl/intl.dart';
 void main() {
   ConvertSecondsToDate();
 
-  getDateTime();
+  getDate(1618480018);
+}
+
+String getDate(int seconds) {
+  var receivedSeconds = seconds * 1000;
+  //1618480018000
+  var convertedDateString =
+      DateTime.fromMillisecondsSinceEpoch(receivedSeconds, isUtc: true)
+          .toString();
+  var convertedDate =
+      DateTime.fromMillisecondsSinceEpoch(receivedSeconds, isUtc: true);
+  print(convertedDateString);
+  var day = convertedDate.day;
+  var month = convertedDate.month;
+  var year = convertedDate.year;
+
+  return "$day - $month - $year";
 }
 
 void ConvertSecondsToDate() {

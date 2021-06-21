@@ -71,7 +71,8 @@ class _StoryInfoState extends State<StoryInfo> {
     storyData = await StoreInfoScreenService(storeID: widget.storyID).getData();
 
     timeData = Time().convertTimeToDHMS(
-        startTime: storyData["created"], endTime: storyData["updated"]);
+        startTime: storyData["updated"],
+        endTime: (DateTime.now().millisecondsSinceEpoch / 1000).ceil());
 
     setState(() {
       isLoading = false;
@@ -170,9 +171,11 @@ class _StoryInfoState extends State<StoryInfo> {
 
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return ReadingScreen(
-                        storyTitle: storyTitle,
-                        storyID: widget.storyID,
-                        chapterCount: storyChapters);
+                      storyTitle: storyTitle,
+                      storyID: widget.storyID,
+                      chapterCount: storyChapters,
+                      currentChapter: 1,
+                    );
                   }));
                 },
                 child: Text(

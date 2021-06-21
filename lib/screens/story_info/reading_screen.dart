@@ -8,16 +8,18 @@ import 'package:reading_app/services/story_detail_screen_service.dart';
 import 'menu_chapters_screen.dart';
 
 class ReadingScreen extends StatefulWidget {
-  const ReadingScreen(
+  ReadingScreen(
       {Key? key,
       required this.storyTitle,
       required this.storyID,
-      required this.chapterCount})
+      required this.chapterCount,
+      required this.currentChapter})
       : super(key: key);
 
   final String storyID;
   final String storyTitle;
   final int chapterCount;
+  final int currentChapter;
 
   @override
   _ReadingScreenState createState() => _ReadingScreenState();
@@ -30,7 +32,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
 
   String chapterTitle = "";
   String chapterContent = "";
-  int chapterNumber = 1;
+  int currentChapterNumber = 1;
 
   @override
   void initState() {
@@ -38,13 +40,14 @@ class _ReadingScreenState extends State<ReadingScreen> {
     super.initState();
 
     visible = true;
+    currentChapterNumber = widget.currentChapter;
     getData();
   }
 
   void getData() async {
     isLoading = true;
     storyData = await StoryDetailScreenService(
-            storyID: widget.storyID, chapterNumber: chapterNumber)
+            storyID: widget.storyID, chapterNumber: currentChapterNumber)
         .getData();
 
     setState(() {
@@ -110,14 +113,15 @@ class _ReadingScreenState extends State<ReadingScreen> {
                       onPressed: () {
                         print("user wants to go back");
                         setState(() {
-                          chapterNumber--;
+                          currentChapterNumber--;
                           getData();
                         });
                       },
                       icon: Icon(
                         Icons.arrow_back_ios,
-                        color:
-                            chapterNumber == 1 ? Colors.grey[300] : Colors.blue,
+                        color: currentChapterNumber == 1
+                            ? Colors.grey[300]
+                            : Colors.blue,
                       ),
                     ),
                     IconButton(
@@ -140,13 +144,13 @@ class _ReadingScreenState extends State<ReadingScreen> {
                       onPressed: () {
                         print("user wants to read next");
                         setState(() {
-                          chapterNumber++;
+                          currentChapterNumber++;
                           getData();
                         });
                       },
                       icon: Icon(
                         Icons.arrow_forward_ios,
-                        color: chapterNumber == widget.chapterCount
+                        color: currentChapterNumber == widget.chapterCount
                             ? Colors.grey[300]
                             : Colors.blue,
                       ),
@@ -210,7 +214,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
                             margin: EdgeInsets.only(bottom: 50, top: 20),
                             child: Center(
                               child: Text(
-                                "--- $chapterNumber "
+                                "--- $currentChapterNumber "
                                 "/ ${widget.chapterCount} ---",
                                 style: TextStyle(
                                     color: Colors.black,

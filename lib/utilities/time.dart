@@ -47,6 +47,23 @@ class Time {
     }
   }
 
+  String getDate(int seconds) {
+    var receivedSeconds = seconds * 1000;
+    var convertedDateString =
+        DateTime.fromMillisecondsSinceEpoch(receivedSeconds, isUtc: true)
+            .toString();
+    var convertedDate =
+        DateTime.fromMillisecondsSinceEpoch(receivedSeconds, isUtc: true);
+    var day =
+        convertedDate.day >= 10 ? convertedDate.day : "0${convertedDate.day}";
+    var month = convertedDate.month >= 10
+        ? convertedDate.month
+        : "0${convertedDate.month}";
+    var year = convertedDate.year;
+
+    return "$day - $month - $year";
+  }
+
   convertTimeToDHMS({required int startTime, required int endTime}) {
     int hours = 0;
     int days = 0;

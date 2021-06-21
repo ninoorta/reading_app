@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:reading_app/screens/story_info/reading_screen.dart';
 import 'package:reading_app/services/story_info_screen_service.dart';
+// utilities
+import 'package:reading_app/utilities/time.dart';
 
 class MenuChapters extends StatefulWidget {
   const MenuChapters(
@@ -41,28 +45,22 @@ class _MenuChaptersState extends State<MenuChapters> {
     isLoading = true;
     print("start to load");
 
-    chaptersData = await StoreInfoScreenService(storeID: widget.storyID)
+    var apiResult = await StoreInfoScreenService(storeID: widget.storyID)
         .getChaptersData(startOffset: startOffset, endOffset: endOffset);
 
     setState(() {
+      chaptersData = apiResult;
+
       if (chaptersData.length > 50) {
         endChapterList = chaptersData.length % 50;
       }
       isLoading = false;
+      // print("current chaptersData $chaptersData");
     });
   }
 
   Future callWhenCurrentChapterChange() async {
-    setState(() {
-      startOffset = 1 + currentChapter * 50;
-
-      if (currentChapter != endChapterList) {
-        endOffset = currentChapter * 50;
-      } else {
-        endOffset = widget.chaptersCount - currentChapter * 50;
-      }
-      ;
-    });
+    await getData();
   }
 
   @override
@@ -108,7 +106,11 @@ class _MenuChaptersState extends State<MenuChapters> {
                     : () {
                         setState(() {
                           currentChapter = 1;
-                          callWhenCurrentChapterChange();
+                          startOffset = 0;
+                          endOffset = widget.chaptersCount > 50
+                              ? 50
+                              : widget.chaptersCount;
+                          // callWhenCurrentChapterChange();
                           getData();
                         });
                       },
@@ -123,7 +125,10 @@ class _MenuChaptersState extends State<MenuChapters> {
                     : () {
                         setState(() {
                           currentChapter--;
-                          callWhenCurrentChapterChange();
+                          startOffset = 1 + (currentChapter - 1) * 50;
+                          endOffset = currentChapter * 50;
+
+                          // callWhenCurrentChapterChange();
                           getData();
                         });
                       },
@@ -149,7 +154,18 @@ class _MenuChaptersState extends State<MenuChapters> {
                     : () {
                         setState(() {
                           currentChapter++;
-                          callWhenCurrentChapterChange();
+                          print(
+                              "current chapter before call changes $currentChapter");
+                          startOffset = 1 + (currentChapter - 1) * 50;
+
+                          if (currentChapter != endChapterList) {
+                            endOffset = currentChapter * 50;
+                          } else {
+                            endOffset = widget.chaptersCount;
+                          }
+                          ;
+                          // callWhenCurrentChapterChange();
+
                           getData();
                         });
                       },
@@ -166,7 +182,10 @@ class _MenuChaptersState extends State<MenuChapters> {
                     : () {
                         setState(() {
                           currentChapter = endChapterList;
-                          callWhenCurrentChapterChange();
+                          startOffset = (currentChapter - 1) * 50 + 1;
+                          endOffset = widget.chaptersCount;
+
+                          // callWhenCurrentChapterChange();
                           getData();
                         });
                       },
@@ -207,34 +226,61 @@ class _MenuChaptersState extends State<MenuChapters> {
                     itemCount:
                         chaptersData.length >= 50 ? 50 : chaptersData.length,
                     itemBuilder: (context, index) {
+                      var currentItem = chaptersData[index];
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                "Chương ${index + 1}",
-                                style: TextStyle(
-                                    color: Colors.grey[850],
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal),
+                          GestureDetector(
+                            onTap: () {
+                              pushNewScreen(context,
+                                  screen: ReadingScreen(
+                                    storyTitle: widget.storyTitle,
+                                    storyID: widget.storyID,
+                                    chapterCount: widget.chaptersCount,
+                                    currentChapter: currentItem["number"],
+                                  ),
+                                  withNavBar: false,
+                                  pageTransitionAnimation:
+                                      PageTransitionAnimation.cupertino);
+                            },
+                            child: Container(
+                              margin: EdgeInsets.symmetric(vertical: 2.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 5,
+                                    child: Text(
+                                      currentItem["title"],
+                                      style: TextStyle(
+                                          color: Colors.grey[850],
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10.0,
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      Time().getDate(currentItem["updated"]),
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.grey[500]),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                "3 Jun 2021",
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.grey[500]),
-                              ),
-                            ],
+                            ),
                           ),
-                          index == 19
-                              ? Container()
-                              : new Divider(
-                                  color: Colors.black54,
-                                  thickness: 0.75,
-                                )
+                          new Divider(
+                            color: Colors.black54,
+                            thickness: 0.75,
+                          )
                         ],
                       );
                     },

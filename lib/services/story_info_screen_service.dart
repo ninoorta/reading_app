@@ -26,6 +26,7 @@ class StoreInfoScreenService {
 
   Future getChaptersData(
       {required int startOffset, required int endOffset}) async {
+    print("startOffset $startOffset, endOffset $endOffset");
     http.Response response = await http.get(Uri.parse(
         "http://api.noveltyt.net/api/v2/chapters/numbers?end=$endOffset&start=$startOffset&story_id=$storeID"));
 
