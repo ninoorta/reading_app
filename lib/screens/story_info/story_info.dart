@@ -358,10 +358,10 @@ class _StoryInfoState extends State<StoryInfo> {
                                 width: 50,
                                 height: 120,
                                 decoration: BoxDecoration(
-                                  color: Colors.grey,
+                                  color: Colors.transparent,
                                 ),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(5.0),
+                                  borderRadius: BorderRadius.circular(10.0),
                                   child: CachedNetworkImage(
                                     progressIndicatorBuilder:
                                         (context, url, progress) =>
