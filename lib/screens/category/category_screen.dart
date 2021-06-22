@@ -66,7 +66,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
             print("user chose this one $category");
             pushNewScreen(
               context,
-              screen: CategoryDetailScreen(),
+              screen: CategoryDetailScreen(
+                selectedGenre: category,
+              ),
               withNavBar: true, // OPTIONAL VALUE. True by default.
               pageTransitionAnimation: PageTransitionAnimation.cupertino,
             );
@@ -84,17 +86,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
           ));
 
       list.add(newItem);
-
-      // if (index == categoryList.length - 1 && categoryList.length % 2 == 1) {
-      //   list.add(SizedBox(
-      //     height: 20.0,
-      //   ));
-      //   list.add(
-      //       SizedBox(
-      //     height: 2.0,
-      //   ));
-      // }
-
     }
 
     return list;

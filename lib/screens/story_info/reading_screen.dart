@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 // services
 import 'package:reading_app/services/story_detail_screen_service.dart';
 
@@ -12,14 +11,14 @@ class ReadingScreen extends StatefulWidget {
       {Key? key,
       required this.storyTitle,
       required this.storyID,
-      required this.chapterCount,
-      required this.currentChapter})
+      required this.chaptersCount,
+      required this.currentChapterNumber})
       : super(key: key);
 
   final String storyID;
   final String storyTitle;
-  final int chapterCount;
-  final int currentChapter;
+  final int chaptersCount;
+  final int currentChapterNumber;
 
   @override
   _ReadingScreenState createState() => _ReadingScreenState();
@@ -40,7 +39,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
     super.initState();
 
     visible = true;
-    currentChapterNumber = widget.currentChapter;
+    currentChapterNumber = widget.currentChapterNumber;
     getData();
   }
 
@@ -126,14 +125,33 @@ class _ReadingScreenState extends State<ReadingScreen> {
                     ),
                     IconButton(
                       onPressed: () {
-                        pushNewScreen(context,
-                            screen: MenuChapters(
-                                storyTitle: widget.storyTitle,
-                                storyID: widget.storyID,
-                                chaptersCount: widget.chapterCount),
-                            withNavBar: false,
-                            pageTransitionAnimation:
-                                PageTransitionAnimation.cupertino);
+                        //
+                        // pushNewScreen(context,
+                        //     screen: MenuChapters(
+                        //       storyTitle: widget.storyTitle,
+                        //       storyID: widget.storyID,
+                        //       chaptersCount: widget.chapterCount,
+                        //     ),
+                        //     withNavBar: false,
+                        //     pageTransitionAnimation:
+                        //         PageTransitionAnimation.cupertino);
+
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          enableDrag: true,
+                          builder: (context) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10)),
+                              height: MediaQuery.of(context).size.height * 0.95,
+                              child: MenuChapters(
+                                  storyTitle: widget.storyTitle,
+                                  storyID: widget.storyID,
+                                  chaptersCount: widget.chaptersCount),
+                            );
+                          },
+                        );
                       },
                       icon: Icon(
                         Icons.menu,
@@ -150,7 +168,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
                       },
                       icon: Icon(
                         Icons.arrow_forward_ios,
-                        color: currentChapterNumber == widget.chapterCount
+                        color: currentChapterNumber == widget.chaptersCount
                             ? Colors.grey[300]
                             : Colors.blue,
                       ),
@@ -215,7 +233,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
                             child: Center(
                               child: Text(
                                 "--- $currentChapterNumber "
-                                "/ ${widget.chapterCount} ---",
+                                "/ ${widget.chaptersCount} ---",
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 17,

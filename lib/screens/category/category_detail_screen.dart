@@ -1,12 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:reading_app/constants.dart';
-import 'package:skeleton_text/skeleton_text.dart';
+import 'package:reading_app/screens/category/components/tabBar_content/most_favorite_content.dart';
+import 'package:reading_app/screens/category/components/tabBar_content/most_view_content.dart';
+// services
+import 'package:reading_app/services/category_detail_screen_service.dart';
 
 import '../search/filter_screen.dart';
+import 'components/tabBar_content/new_publish_content.dart';
+import 'components/tabBar_content/new_update_content.dart';
 
 class CategoryDetailScreen extends StatefulWidget {
+  final String selectedGenre;
+
+  CategoryDetailScreen({required this.selectedGenre});
+
   @override
   _CategoryDetailScreenState createState() => _CategoryDetailScreenState();
 }
@@ -16,40 +24,141 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
   late TabController _tabController;
   int tabIndex = 0;
 
-  int pageIndex = 0;
-  // List<Widget> pageList = <Widget>[
-  //   CategoryScreen(),
-  //   ExploreScreen(),
-  //   SearchScreen(),
-  //   HistoryScreen()
-  // ];
+  int nextOffsetNewPublish = 0;
+  int nextOffsetNewUpdate = 0;
+  int nextOffsetMostView = 0;
+  int nextOffsetMostLike = 0;
+
+  int limitItem = 20;
 
   bool isLoading = true;
+  bool isLoadingMore = false;
+
+  List sort = ["created", "updated", "view_count", "like_count"];
+
+  List newPublishData = [];
+  List newUpdatedData = [];
+  List mostViewData = [];
+  List mostFavoriteData = [];
+
+  String selectedSort = "";
+
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    selectedSort = sort[0];
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.atEdge) {
+        if (_scrollController.position.pixels == 0) {
+        } else {
+          setState(() {
+            this.isLoadingMore = true;
+            getMoreData();
+          });
+        }
+      }
+    });
+
     _tabController =
         TabController(initialIndex: tabIndex, length: 4, vsync: this);
 
-    Future.delayed(Duration(seconds: 5), () {
+    _tabController.addListener(() {
       setState(() {
-        isLoading = false;
-        print("5s passed");
+        print("index of tabbar change: ${_tabController.index}");
+        tabIndex = _tabController.index;
+
+        selectedSort = sort[tabIndex];
+        // this.isLoading = true;
+        getDataInitial();
       });
+    });
+
+    getDataInitial();
+  }
+
+  Future getMoreData() async {
+    this.isLoadingMore = true;
+    var nextOffset;
+
+    if (tabIndex == 0) {
+      nextOffset = nextOffsetNewPublish + limitItem;
+    }
+    if (tabIndex == 1) {
+      nextOffset = nextOffsetNewUpdate + limitItem;
+    }
+    if (tabIndex == 2) {
+      nextOffset = nextOffsetMostView + limitItem;
+    }
+    if (tabIndex == 3) {
+      nextOffset = nextOffsetMostLike + limitItem;
+    }
+    var apiResult = await CategoryDetailScreenService().getData(
+        genre: widget.selectedGenre,
+        offset: nextOffset,
+        sortType: selectedSort,
+        limitItem: limitItem);
+
+    setState(() {
+      // newPublishData = newPublishData + apiResult;
+
+      if (tabIndex == 0) {
+        newPublishData = newPublishData + apiResult;
+      }
+      if (tabIndex == 1) {
+        newUpdatedData = newUpdatedData + apiResult;
+      }
+      if (tabIndex == 2) {
+        mostViewData = mostViewData + apiResult;
+      }
+      if (tabIndex == 3) {
+        mostFavoriteData = mostFavoriteData + apiResult;
+      }
+
+      this.isLoadingMore = false;
+    });
+  }
+
+  Future getDataInitial() async {
+    // this.isLoading = true;
+    var apiResult = await CategoryDetailScreenService().getData(
+        genre: widget.selectedGenre,
+        offset: 0,
+        sortType: selectedSort,
+        limitItem: limitItem);
+
+    setState(() {
+      if (tabIndex == 0) {
+        newPublishData = apiResult;
+      }
+      if (tabIndex == 1) {
+        newUpdatedData = apiResult;
+      }
+      if (tabIndex == 2) {
+        mostViewData = apiResult;
+      }
+      if (tabIndex == 3) {
+        mostFavoriteData = apiResult;
+      }
+      // newPublishData = apiResult;
+      // debugPrint("data : $categoryDetailData", wrapWidth: 1024);
+      // print("data in category detail screen : $categoryDetailData");
+
+      this.isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    int cupertinoTabBarValue = 0;
-    int cupertinoTabBarValueGetter() => cupertinoTabBarValue;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            "Hài hước",
+            widget.selectedGenre,
             style: TextStyle(
                 fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
           ),
@@ -81,8 +190,8 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
             tabs: <Widget>[
               Text("Mới Đăng"),
               Text("Mới Cập nhật"),
-              Text("Full"),
-              Text("Xem nhiều"),
+              Text("Xem Nhiều"),
+              Text("Yêu Thích"),
             ],
           ),
           leading: BackButton(
@@ -98,7 +207,6 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
                     context,
                     screen: FilterScreen(),
                     withNavBar: false,
-                    // OPTIONAL VALUE. True by default.
                     pageTransitionAnimation: PageTransitionAnimation.cupertino,
                   );
                 },
@@ -110,184 +218,40 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
         ),
         body: Container(
           color: Colors.white,
+          padding: EdgeInsets.only(bottom: 25, top: 10, left: 15, right: 15),
           child: TabBarView(
             controller: _tabController,
             children: <Widget>[
-              CupertinoScrollbar(
-                child: Container(
-                  margin: EdgeInsets.only(bottom: 20.0),
-                  child: ListView.builder(
-                    controller: ScrollController(),
-                    itemCount: 10,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return isLoading
-                          ? MyCustomTileSkeleton()
-                          : MyCustomTile();
-                    },
-                  ),
-                ),
-              ),
-              Container(
-                color: Colors.green,
-              ),
-              Container(
-                color: Colors.blue,
-              ),
-              Container(
-                color: Colors.teal,
-              ),
+              NewUpdateContent(
+                  selectedGenre: widget.selectedGenre,
+                  sortType: sort[0],
+                  limitItem: limitItem),
+              NewPublishContent(
+                  selectedGenre: widget.selectedGenre,
+                  sortType: sort[1],
+                  limitItem: limitItem),
+              MostViewContent(
+                  selectedGenre: widget.selectedGenre,
+                  sortType: sort[2],
+                  limitItem: limitItem),
+              MostFavoriteContent(
+                  selectedGenre: widget.selectedGenre,
+                  sortType: sort[3],
+                  limitItem: limitItem),
+              // CustomTabBarContent(
+              //     scrollController: _scrollController,
+              //     categoryDetailData: newPublishData,
+              //     isLoading: isLoading,
+              //     isLoadingMore: isLoadingMore),
+              // CustomTabBarContent(
+              //     scrollController: _scrollController,
+              //     categoryDetailData: newUpdatedData,
+              //     isLoading: isLoading,
+              //     isLoadingMore: isLoadingMore),
             ],
           ),
         ),
       ),
     );
-  }
-}
-
-class MyCustomTile extends StatelessWidget {
-  const MyCustomTile({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(10.0),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Container(
-                margin: EdgeInsets.only(top: 5),
-                // color: Colors.grey,
-                // constraints: BoxConstraints(
-                //   minHeight: double.infinity,
-                //   minWidth: double.infinity,
-                // ),
-                height: 80,
-                // width: 65,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(15.0, 0, 0, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "Tru tiên",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 20.0,
-                          color: Colors.blue),
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(vertical: 4.0)),
-                    Text(
-                      "Hôm qua  - Chi Kim",
-                      style: kSubTitleTextStyle,
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
-                    Text(
-                      "12 chương",
-                      style: kSubTitleTextStyle,
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
-                    Text(
-                      "Ngôn Tình - Hài Hước - Kiếm Hiệp",
-                      style: kSubTitleTextStyle,
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class MyCustomTileSkeleton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(10.0),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: SkeletonAnimation(
-                child: Container(
-                  // margin: EdgeInsets.only(top: 5),
-                  height: 80,
-                  decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(5.0)),
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(15.0, 0, 0, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    BuildSkeletonItem(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      height: 18,
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(vertical: 4.0)),
-                    BuildSkeletonItem(
-                      width: MediaQuery.of(context).size.width * 0.25,
-                      height: 14,
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
-                    BuildSkeletonItem(
-                      width: MediaQuery.of(context).size.width * 0.1,
-                      height: 14,
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
-                    BuildSkeletonItem(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      height: 14,
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class BuildSkeletonItem extends StatelessWidget {
-  final double width;
-  final double height;
-
-  BuildSkeletonItem({required this.width, required this.height});
-
-  @override
-  Widget build(BuildContext context) {
-    return SkeletonAnimation(
-        child: Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0), color: Colors.grey[300]),
-      width: width,
-      height: height,
-    ));
   }
 }

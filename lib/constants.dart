@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 const kSubTitleTextStyle =
     TextStyle(fontSize: 14, color: Colors.black45, fontWeight: FontWeight.w500);
 
+const kSubTittleBiggerTextStyle =
+    TextStyle(fontSize: 15, color: Colors.black45, fontWeight: FontWeight.w500);
+
 const kTitleTextStyle =
     TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold);
 

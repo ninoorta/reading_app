@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:reading_app/screens/category/category_detail_screen.dart';
 import 'package:reading_app/screens/category/category_screen.dart';
 import 'package:reading_app/screens/history/history_screen.dart';
 import 'package:reading_app/screens/main_screen.dart';
@@ -32,7 +31,7 @@ class MyApp extends StatelessWidget {
         "/category": (context) => CategoryScreen(
               fromOtherRoute: false,
             ),
-        "/categoryDetail": (context) => CategoryDetailScreen()
+        // "/categoryDetail": (context) => CategoryDetailScreen()
       },
     );
   }

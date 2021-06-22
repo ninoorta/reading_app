@@ -6,12 +6,12 @@ import 'package:reading_app/services/story_info_screen_service.dart';
 import 'package:reading_app/utilities/time.dart';
 
 class MenuChapters extends StatefulWidget {
-  const MenuChapters(
-      {Key? key,
-      required this.storyTitle,
-      required this.storyID,
-      required this.chaptersCount})
-      : super(key: key);
+  const MenuChapters({
+    Key? key,
+    required this.storyTitle,
+    required this.storyID,
+    required this.chaptersCount,
+  }) : super(key: key);
 
   final String storyTitle;
   final String storyID;
@@ -27,7 +27,7 @@ class _MenuChaptersState extends State<MenuChapters> {
   List chaptersData = [];
 
   int endChapterList = 1;
-  int currentChapter = 1;
+  int currentChapterList = 1;
 
   int endOffset = 50;
   int startOffset = 1;
@@ -65,6 +65,9 @@ class _MenuChaptersState extends State<MenuChapters> {
 
   @override
   Widget build(BuildContext context) {
+    var arguments = ModalRoute.of(context)!.settings.arguments;
+    print("arguments $arguments");
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -101,11 +104,11 @@ class _MenuChaptersState extends State<MenuChapters> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             IconButton(
-                onPressed: currentChapter == 1
+                onPressed: currentChapterList == 1
                     ? null
                     : () {
                         setState(() {
-                          currentChapter = 1;
+                          currentChapterList = 1;
                           startOffset = 0;
                           endOffset = widget.chaptersCount > 50
                               ? 50
@@ -117,16 +120,17 @@ class _MenuChaptersState extends State<MenuChapters> {
                 icon: Icon(
                   Icons.skip_previous_rounded,
                   size: 30,
-                  color: currentChapter == 1 ? Colors.grey[400] : Colors.blue,
+                  color:
+                      currentChapterList == 1 ? Colors.grey[400] : Colors.blue,
                 )),
             IconButton(
-                onPressed: currentChapter == 1
+                onPressed: currentChapterList == 1
                     ? null
                     : () {
                         setState(() {
-                          currentChapter--;
-                          startOffset = 1 + (currentChapter - 1) * 50;
-                          endOffset = currentChapter * 50;
+                          currentChapterList--;
+                          startOffset = 1 + (currentChapterList - 1) * 50;
+                          endOffset = currentChapterList * 50;
 
                           // callWhenCurrentChapterChange();
                           getData();
@@ -135,13 +139,14 @@ class _MenuChaptersState extends State<MenuChapters> {
                 icon: Icon(
                   Icons.arrow_back_ios,
                   size: 20,
-                  color: currentChapter == 1 ? Colors.grey[400] : Colors.blue,
+                  color:
+                      currentChapterList == 1 ? Colors.grey[400] : Colors.blue,
                 )),
             Container(
               color: Colors.white,
               child: Center(
                   child: Text(
-                "$currentChapter / $endChapterList",
+                "$currentChapterList / $endChapterList",
                 style: TextStyle(
                     color: Colors.blue,
                     fontSize: 22,
@@ -149,17 +154,17 @@ class _MenuChaptersState extends State<MenuChapters> {
               )),
             ),
             IconButton(
-                onPressed: currentChapter == endChapterList
+                onPressed: currentChapterList == endChapterList
                     ? null
                     : () {
                         setState(() {
-                          currentChapter++;
+                          currentChapterList++;
                           print(
-                              "current chapter before call changes $currentChapter");
-                          startOffset = 1 + (currentChapter - 1) * 50;
+                              "current chapter before call changes $currentChapterList");
+                          startOffset = 1 + (currentChapterList - 1) * 50;
 
-                          if (currentChapter != endChapterList) {
-                            endOffset = currentChapter * 50;
+                          if (currentChapterList != endChapterList) {
+                            endOffset = currentChapterList * 50;
                           } else {
                             endOffset = widget.chaptersCount;
                           }
@@ -172,17 +177,17 @@ class _MenuChaptersState extends State<MenuChapters> {
                 icon: Icon(
                   Icons.arrow_forward_ios,
                   size: 20,
-                  color: currentChapter == endChapterList
+                  color: currentChapterList == endChapterList
                       ? Colors.grey[400]
                       : Colors.blue,
                 )),
             IconButton(
-                onPressed: currentChapter == endChapterList
+                onPressed: currentChapterList == endChapterList
                     ? null
                     : () {
                         setState(() {
-                          currentChapter = endChapterList;
-                          startOffset = (currentChapter - 1) * 50 + 1;
+                          currentChapterList = endChapterList;
+                          startOffset = (currentChapterList - 1) * 50 + 1;
                           endOffset = widget.chaptersCount;
 
                           // callWhenCurrentChapterChange();
@@ -192,7 +197,7 @@ class _MenuChaptersState extends State<MenuChapters> {
                 icon: Icon(
                   Icons.skip_next_rounded,
                   size: 30,
-                  color: currentChapter == endChapterList
+                  color: currentChapterList == endChapterList
                       ? Colors.grey[400]
                       : Colors.blue,
                 )),
@@ -233,16 +238,20 @@ class _MenuChaptersState extends State<MenuChapters> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              pushNewScreen(context,
-                                  screen: ReadingScreen(
-                                    storyTitle: widget.storyTitle,
-                                    storyID: widget.storyID,
-                                    chapterCount: widget.chaptersCount,
-                                    currentChapter: currentItem["number"],
-                                  ),
-                                  withNavBar: false,
-                                  pageTransitionAnimation:
-                                      PageTransitionAnimation.cupertino);
+                              Navigator.pop(context);
+
+                              pushNewScreen(
+                                context,
+                                screen: ReadingScreen(
+                                  storyTitle: widget.storyTitle,
+                                  storyID: widget.storyID,
+                                  chaptersCount: widget.chaptersCount,
+                                  currentChapterNumber: currentItem["number"],
+                                ),
+                                withNavBar: false,
+                                pageTransitionAnimation:
+                                    PageTransitionAnimation.cupertino,
+                              );
                             },
                             child: Container(
                               margin: EdgeInsets.symmetric(vertical: 2.0),
@@ -267,7 +276,10 @@ class _MenuChaptersState extends State<MenuChapters> {
                                   Expanded(
                                     flex: 2,
                                     child: Text(
-                                      Time().getDate(currentItem["updated"]),
+                                      currentItem.containsKey("updated")
+                                          ? Time()
+                                              .getDate(currentItem["updated"])
+                                          : "",
                                       style: TextStyle(
                                           fontSize: 16,
                                           color: Colors.grey[500]),

@@ -12,6 +12,7 @@ import 'package:reading_app/screens/story_info/reading_screen.dart';
 // services
 import "package:reading_app/services/story_info_screen_service.dart";
 import 'package:reading_app/utilities/time.dart';
+import 'package:skeleton_text/skeleton_text.dart';
 
 class StoryInfo extends StatefulWidget {
   StoryInfo({Key? key, required this.storyID}) : super(key: key);
@@ -169,14 +170,16 @@ class _StoryInfoState extends State<StoryInfo> {
                 onPressed: () {
                   print("user want to read this one");
 
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return ReadingScreen(
-                      storyTitle: storyTitle,
-                      storyID: widget.storyID,
-                      chapterCount: storyChapters,
-                      currentChapter: 1,
-                    );
-                  }));
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return ReadingScreen(
+                        storyTitle: storyTitle,
+                        storyID: widget.storyID,
+                        currentChapterNumber: 1,
+                        chaptersCount: storyChapters,
+                      );
+                    },
+                  ));
                 },
                 child: Text(
                   "Đọc truyện",
@@ -360,6 +363,17 @@ class _StoryInfoState extends State<StoryInfo> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(5.0),
                                   child: CachedNetworkImage(
+                                    progressIndicatorBuilder:
+                                        (context, url, progress) =>
+                                            SkeletonAnimation(
+                                                child: Container(
+                                      width: 50,
+                                      height: 120,
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey[300],
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                    )),
                                     imageUrl: storyImageCoverURL,
                                     fit: BoxFit.cover,
                                   ),
