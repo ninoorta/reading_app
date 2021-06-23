@@ -34,4 +34,17 @@ class ExploreScreenService {
       throw Exception("err when getGroupData in explore screen");
     }
   }
+
+  Future getListDetailData(
+      {required int offset, required String sortType}) async {
+    http.Response response = await http.get(Uri.parse(
+        "http://api.noveltyt.net/api/v2/stories/list?limit=36&offset=$offset&sort=$sortType"));
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      return data["data"];
+    } else {
+      print("status code: ${response.statusCode}");
+      throw Exception("err when getListDetailData in explore screen");
+    }
+  }
 }

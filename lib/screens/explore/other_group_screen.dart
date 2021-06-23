@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reading_app/constants.dart';
-import 'package:reading_app/screens/explore/components/custom_tile_group_skeleton.dart';
+import 'package:reading_app/screens/explore/components/custom_tile_skeleton.dart';
 // services
 
 import 'package:reading_app/services/explore_screen_service.dart';
 
-import 'components/custom_tile_group.dart';
+import 'components/custom_tile.dart';
 
 class OtherGroupScreen extends StatefulWidget {
   OtherGroupScreen({

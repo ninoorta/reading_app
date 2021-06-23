@@ -88,14 +88,16 @@ class _ExploreScreenState extends State<ExploreScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 CustomListView(
-                  listName: "Mới đăng",
+                  listName: "Mới Đăng",
                   isLoading: isLoading,
                   listData: newStories,
+                  isNewPublish: true,
                 ),
                 CustomListView(
-                  listName: "Mới cập nhật",
+                  listName: "Mới Cập Nhật",
                   isLoading: isLoading,
                   listData: recentUpdatedStories,
+                  isNewPublish: false,
                 ),
                 // later
                 // CustomListView(
