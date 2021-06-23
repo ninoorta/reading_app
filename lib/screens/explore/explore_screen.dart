@@ -9,6 +9,7 @@ import 'package:reading_app/services/explore_screen_service.dart';
 import 'components/build_skeleton_type_item.dart';
 import 'components/build_type_item.dart';
 import 'components/custom_listview.dart';
+import 'other_group_screen.dart';
 
 class ExploreScreen extends StatefulWidget {
   @override
@@ -100,7 +101,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 // CustomListView(
                 //     listName: "Truyện đọc gần đây", isLoading: isLoading),
                 // later
-
                 Column(
                   children: [
                     Row(
@@ -168,6 +168,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       itemBuilder: (context, index) {
                         var currentItem = otherList[index];
                         var currentItemID = currentItem["_id"]["\$oid"];
+                        var currentItemTitle = currentItem["title"];
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           // crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -181,6 +182,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                   child: GestureDetector(
                                     onTap: () {
                                       print("move to $currentItemID");
+                                      pushNewScreen(context,
+                                          screen: OtherGroupScreen(
+                                              groupID: currentItemID,
+                                              groupTitle: currentItemTitle),
+                                          withNavBar: true,
+                                          pageTransitionAnimation:
+                                              PageTransitionAnimation
+                                                  .cupertino);
                                     },
                                     child: RichText(
                                         maxLines: 2,
@@ -199,6 +208,15 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                   child: IconButton(
                                     onPressed: () {
                                       print("move to $currentItemID");
+
+                                      pushNewScreen(context,
+                                          screen: OtherGroupScreen(
+                                              groupID: currentItemID,
+                                              groupTitle: currentItemTitle),
+                                          withNavBar: true,
+                                          pageTransitionAnimation:
+                                              PageTransitionAnimation
+                                                  .cupertino);
                                     },
                                     icon: Icon(Icons.arrow_forward_ios),
                                     padding: EdgeInsets.zero,

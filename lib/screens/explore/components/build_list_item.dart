@@ -12,65 +12,60 @@ class BuildListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: () {
-            print("click to move to its story info.");
+    return GestureDetector(
+      onTap: () {
+        print("click to move to its story info.");
 
-            pushNewScreen(context,
-                screen: StoryInfo(
-                  storyID: item["_id"]["\$oid"],
-                ),
-                withNavBar: false,
-                pageTransitionAnimation: PageTransitionAnimation.cupertino);
-          },
-          child: Container(
-            margin: EdgeInsets.only(right: 5.0),
-            decoration: BoxDecoration(
+        pushNewScreen(context,
+            screen: StoryInfo(
+              storyID: item["_id"]["\$oid"],
+            ),
+            withNavBar: false,
+            pageTransitionAnimation: PageTransitionAnimation.cupertino);
+      },
+      child: Container(
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5.0),
+                  color: Colors.grey[300]),
+              child: ClipRRect(
                 borderRadius: BorderRadius.circular(5.0),
-                color: Colors.grey[300]),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(5.0),
-              // child: Image(
-              //   width: 90,
-              //   height: 120,
-              //   fit: BoxFit.cover,
-              //   image: NetworkImage(item["cover"]),
-              // ),
-              child: CachedNetworkImage(
-                progressIndicatorBuilder: (context, url, progress) {
-                  // return Center(child: CircularProgressIndicator());
-                  return SkeletonAnimation(
-                      child: Container(
-                    width: 90,
-                    height: 120,
-                    decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(10.0)),
-                  ));
-                },
-                imageUrl: "${item["cover"]}",
-                fit: BoxFit.cover,
-                width: 90,
-                height: 120,
+                child: CachedNetworkImage(
+                  progressIndicatorBuilder: (context, url, progress) {
+                    return SkeletonAnimation(
+                        child: Container(
+                      width: 90,
+                      height: 120,
+                      decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(10.0)),
+                    ));
+                  },
+                  imageUrl: "${item["cover"]}",
+                  fit: BoxFit.cover,
+                  width: 90,
+                  height: 120,
+                ),
               ),
             ),
-          ),
+            Container(
+              padding: EdgeInsets.fromLTRB(5, 4, 5, 0),
+              child: AutoSizeText(
+                item["title"],
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: Colors.black),
+                minFontSize: 14.0,
+              ),
+              height: 50,
+              width: 100,
+              // margin: EdgeInsets.fromLTRB(0, 5.0, 0, 0),
+            )
+          ],
         ),
-        Container(
-          child: AutoSizeText(
-            item["title"],
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: Colors.black),
-            minFontSize: 14.0,
-          ),
-          height: 50,
-          width: 100,
-          padding: EdgeInsets.fromLTRB(0, 5.0, 0, 0),
-        )
-      ],
+      ),
     );
   }
 }

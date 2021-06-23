@@ -18,3 +18,6 @@ const kMediumDarkerTitleTextStyle =
 
 const kListTitleTextStyle =
     TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.w600);
+
+const kTitleBlue500TextStyle =
+    TextStyle(fontWeight: FontWeight.w500, fontSize: 18.0, color: Colors.blue);

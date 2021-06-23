@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:reading_app/screens/story_info/story_info.dart';
+import 'package:reading_app/utilities/time.dart';
 import 'package:skeleton_text/skeleton_text.dart';
 
 import '../../../constants.dart';
@@ -81,14 +82,11 @@ class MyCustomTile extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         currentItemData["title"],
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18.0,
-                            color: Colors.blue),
+                        style: kTitleBlue500TextStyle,
                       ),
                       Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
                       Text(
-                        "Hôm qua",
+                        Time().getDate(currentItemData["updated"]),
                         style: kSubTittleBiggerTextStyle,
                       ),
                       Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
