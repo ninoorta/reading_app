@@ -118,6 +118,17 @@ class CustomTile extends StatelessWidget {
                       height: 120,
                       width: 90,
                       fit: BoxFit.cover,
+                      errorWidget: (context, url, error) {
+                        return SkeletonAnimation(
+                          child: Container(
+                            height: 120,
+                            width: 90,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: Colors.grey[300]),
+                          ),
+                        );
+                      },
                       progressIndicatorBuilder: (context, url, progress) =>
                           SkeletonAnimation(
                             child: Container(

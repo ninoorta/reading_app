@@ -7,7 +7,6 @@ import 'package:skeleton_text/skeleton_text.dart';
 
 class BuildListItem extends StatelessWidget {
   Map item;
-
   BuildListItem({required this.item});
 
   @override

@@ -56,6 +56,7 @@ class _CustomListViewState extends State<CustomListView> {
                   print("click see more");
                   pushNewScreen(context,
                       screen: ListDetailScreen(
+                        listName: widget.listName,
                         isNewPublish: widget.isNewPublish ? true : false,
                       ),
                       withNavBar: true,

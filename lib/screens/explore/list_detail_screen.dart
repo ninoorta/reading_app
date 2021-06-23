@@ -5,9 +5,10 @@ import 'package:reading_app/screens/explore/components/custom_tile.dart';
 import 'package:reading_app/services/explore_screen_service.dart';
 
 class ListDetailScreen extends StatefulWidget {
-  ListDetailScreen({required this.isNewPublish});
+  ListDetailScreen({required this.isNewPublish, required this.listName});
 
   bool isNewPublish;
+  String listName;
 
   @override
   _ListDetailScreenState createState() => _ListDetailScreenState();
@@ -20,6 +21,7 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
 
   int offset = 0;
   String sortType = "";
+  String sortName = "";
 
   ScrollController _scrollController = ScrollController();
 
@@ -30,6 +32,8 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
 
     print("start to build UI");
     print("isNewPublish ${widget.isNewPublish}");
+
+    this.sortName = widget.listName;
 
     if (widget.isNewPublish) {
       this.getNewPublishData();
@@ -64,6 +68,18 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
     });
   }
 
+  Future getData() async {
+    this.isLoading = true;
+    var apiResult = await ExploreScreenService()
+        .getListDetailData(offset: offset, sortType: sortType);
+
+    setState(() {
+      this.dataList = apiResult;
+
+      this.isLoading = false;
+    });
+  }
+
   Future getNewPublishData() async {
     this.isLoading = true;
     var apiResult = await ExploreScreenService()
@@ -93,7 +109,7 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
-          "New",
+          sortName,
           style: kTitleTextStyle,
         ),
         centerTitle: true,
@@ -104,7 +120,81 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
         ),
         actions: [
           IconButton(
-              onPressed: null,
+              onPressed: () {
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (context) {
+                    return CupertinoActionSheet(
+                      actions: [
+                        CupertinoActionSheetAction(
+                            onPressed: () {
+                              print("Mới nhất");
+
+                              setState(() {
+                                sortType = "created";
+                                sortName = "Mới Nhất";
+                                this.getData();
+                                Navigator.pop(context);
+                              });
+                            },
+                            child: Text(
+                              "Mới Nhất",
+                              style: TextStyle(color: Colors.red),
+                            )),
+                        CupertinoActionSheetAction(
+                            onPressed: () {
+                              print("Mới Cập Nhật");
+                              setState(() {
+                                sortType = "updated";
+                                sortName = "Mới Cập Nhật";
+                                this.getData();
+                                Navigator.pop(context);
+                              });
+                            },
+                            child: Text(
+                              "Mới Cập Nhật",
+                              style: TextStyle(color: Colors.red),
+                            )),
+                        CupertinoActionSheetAction(
+                            onPressed: () {
+                              print("Xem Nhiều");
+                              setState(() {
+                                sortType = "view_count";
+                                sortName = "Xem Nhiều";
+                                this.getData();
+                                Navigator.pop(context);
+                              });
+                            },
+                            child: Text(
+                              "Xem Nhiều",
+                              style: TextStyle(color: Colors.red),
+                            )),
+                        CupertinoActionSheetAction(
+                            onPressed: () {
+                              print("Yêu Thích");
+                              setState(() {
+                                sortType = "like_count";
+                                sortName = "Yêu Thích";
+                                this.getData();
+                                Navigator.pop(context);
+                              });
+                            },
+                            child: Text(
+                              "Yêu Thích",
+                              style: TextStyle(color: Colors.red),
+                            )),
+                      ],
+                      cancelButton: CupertinoActionSheetAction(
+                        child: Text(
+                          'Hủy',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    );
+                  },
+                );
+              },
               icon: Icon(
                 Icons.sort,
                 color: Colors.blue,
