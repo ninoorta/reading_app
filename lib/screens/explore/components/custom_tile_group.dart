@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:reading_app/screens/story_info/story_info.dart';
 import 'package:reading_app/utilities/time.dart';
@@ -35,6 +36,7 @@ class CustomTile extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 5, 10, 5),
       child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
         onTap: () {
           print("tap group item ${currentItem["_id"]["\$oid"]}");
 
@@ -43,91 +45,93 @@ class CustomTile extends StatelessWidget {
               withNavBar: false,
               pageTransitionAnimation: PageTransitionAnimation.cupertino);
         },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 4,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      text: TextSpan(children: [
-                        TextSpan(
-                            text: currentItem["title"],
-                            style: kTitleBlue500TextStyle)
-                      ])),
-                  SizedBox(
-                    height: 7.5,
-                  ),
-                  RichText(
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      text: TextSpan(children: [
-                        new TextSpan(
-                            text: Time().getDate(currentItem["updated"]),
-                            style: kSubTittleBiggerTextStyle)
-                      ])),
-                  SizedBox(
-                    height: 3,
-                  ),
-                  RichText(
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      text: TextSpan(children: [
-                        new TextSpan(
-                            text: currentItem["author"],
-                            style: kSubTittleBiggerTextStyle)
-                      ])),
-                  SizedBox(
-                    height: 3,
-                  ),
-                  RichText(
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      text: TextSpan(children: [
-                        new TextSpan(
-                            text: "${currentItem["chapter_count"]} chương",
-                            style: kSubTittleBiggerTextStyle)
-                      ])),
-                  SizedBox(
-                    height: 3,
-                  ),
-                  RichText(
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-                      text: TextSpan(
-                          children: renderGenreWidget(
-                              genreList: currentItem["genre"]))),
-                ],
+        child: Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 4,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text: currentItem["title"],
+                              style: kTitleBlue500TextStyle)
+                        ])),
+                    SizedBox(
+                      height: 7.5,
+                    ),
+                    RichText(
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        text: TextSpan(children: [
+                          new TextSpan(
+                              text: Time().getDate(currentItem["updated"]),
+                              style: kSubTittleBiggerTextStyle)
+                        ])),
+                    SizedBox(
+                      height: 3,
+                    ),
+                    RichText(
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        text: TextSpan(children: [
+                          new TextSpan(
+                              text: currentItem["author"],
+                              style: kSubTittleBiggerTextStyle)
+                        ])),
+                    SizedBox(
+                      height: 3,
+                    ),
+                    RichText(
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        text: TextSpan(children: [
+                          new TextSpan(
+                              text: "${currentItem["chapter_count"]} chương",
+                              style: kSubTittleBiggerTextStyle)
+                        ])),
+                    SizedBox(
+                      height: 3,
+                    ),
+                    RichText(
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
+                        text: TextSpan(
+                            children: renderGenreWidget(
+                                genreList: currentItem["genre"]))),
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              flex: 1,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: CachedNetworkImage(
-                    imageUrl: currentItem["cover"],
-                    height: 120,
-                    width: 90,
-                    fit: BoxFit.cover,
-                    progressIndicatorBuilder: (context, url, progress) =>
-                        SkeletonAnimation(
-                          child: Container(
-                            height: 120,
-                            width: 90,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: Colors.grey[300]),
-                          ),
-                        )),
-              ),
-            )
-          ],
+              Expanded(
+                flex: 1,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: CachedNetworkImage(
+                      imageUrl: currentItem["cover"],
+                      height: 120,
+                      width: 90,
+                      fit: BoxFit.cover,
+                      progressIndicatorBuilder: (context, url, progress) =>
+                          SkeletonAnimation(
+                            child: Container(
+                              height: 120,
+                              width: 90,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  color: Colors.grey[300]),
+                            ),
+                          )),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
