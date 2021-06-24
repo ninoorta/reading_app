@@ -363,6 +363,17 @@ class _StoryInfoState extends State<StoryInfo> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10.0),
                                   child: CachedNetworkImage(
+                                    errorWidget: (context, url, error) {
+                                      return SkeletonAnimation(
+                                          child: Container(
+                                        width: 50,
+                                        height: 120,
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey[300],
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
+                                      ));
+                                    },
                                     progressIndicatorBuilder:
                                         (context, url, progress) =>
                                             SkeletonAnimation(

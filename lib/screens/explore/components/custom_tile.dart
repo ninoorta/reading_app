@@ -52,61 +52,64 @@ class CustomTile extends StatelessWidget {
             children: [
               Expanded(
                 flex: 4,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RichText(
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        text: TextSpan(children: [
-                          TextSpan(
-                              text: currentItem["title"],
-                              style: kTitleBlue500TextStyle)
-                        ])),
-                    SizedBox(
-                      height: 7.5,
-                    ),
-                    RichText(
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        text: TextSpan(children: [
-                          new TextSpan(
-                              text: Time().getDate(currentItem["updated"]),
-                              style: kSubTittleBiggerTextStyle)
-                        ])),
-                    SizedBox(
-                      height: 3,
-                    ),
-                    RichText(
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        text: TextSpan(children: [
-                          new TextSpan(
-                              text: currentItem["author"],
-                              style: kSubTittleBiggerTextStyle)
-                        ])),
-                    SizedBox(
-                      height: 3,
-                    ),
-                    RichText(
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        text: TextSpan(children: [
-                          new TextSpan(
-                              text: "${currentItem["chapter_count"]} chương",
-                              style: kSubTittleBiggerTextStyle)
-                        ])),
-                    SizedBox(
-                      height: 3,
-                    ),
-                    RichText(
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 3,
-                        text: TextSpan(
-                            children: renderGenreWidget(
-                                genreList: currentItem["genre"]))),
-                  ],
+                child: Container(
+                  padding: EdgeInsets.only(right: 5),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          text: TextSpan(children: [
+                            TextSpan(
+                                text: currentItem["title"],
+                                style: kTitleBlue500TextStyle)
+                          ])),
+                      SizedBox(
+                        height: 7.5,
+                      ),
+                      RichText(
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          text: TextSpan(children: [
+                            new TextSpan(
+                                text: Time().getDate(currentItem["updated"]),
+                                style: kSubTittleBiggerTextStyle)
+                          ])),
+                      SizedBox(
+                        height: 3,
+                      ),
+                      RichText(
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          text: TextSpan(children: [
+                            new TextSpan(
+                                text: currentItem["author"],
+                                style: kSubTittleBiggerTextStyle)
+                          ])),
+                      SizedBox(
+                        height: 3,
+                      ),
+                      RichText(
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          text: TextSpan(children: [
+                            new TextSpan(
+                                text: "${currentItem["chapter_count"]} chương",
+                                style: kSubTittleBiggerTextStyle)
+                          ])),
+                      SizedBox(
+                        height: 3,
+                      ),
+                      RichText(
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                          text: TextSpan(
+                              children: renderGenreWidget(
+                                  genreList: currentItem["genre"]))),
+                    ],
+                  ),
                 ),
               ),
               Expanded(

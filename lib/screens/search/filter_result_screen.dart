@@ -1,9 +1,96 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reading_app/constants.dart';
+import 'package:reading_app/screens/explore/components/custom_tile.dart';
+import 'package:reading_app/screens/explore/components/custom_tile_skeleton.dart';
+import 'package:reading_app/services/search_screen_service.dart';
 
-class FilterResultScreen extends StatelessWidget {
-  const FilterResultScreen({Key? key}) : super(key: key);
+class FilterResultScreen extends StatefulWidget {
+  FilterResultScreen({required this.argumentsForGetData});
+
+  final Map argumentsForGetData;
+
+  @override
+  _FilterResultScreenState createState() => _FilterResultScreenState();
+}
+
+class _FilterResultScreenState extends State<FilterResultScreen> {
+  bool isLoading = true;
+  bool isLoadingMore = false;
+  List resultData = [];
+  int offset = 0;
+
+  int full = 2;
+  int maxChapter = 6000;
+  int minChapter = 1;
+  String sortType = "created";
+  List<String> genres = [];
+
+  ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    full = widget.argumentsForGetData["full"];
+    maxChapter = widget.argumentsForGetData["max_chapter"];
+    minChapter = widget.argumentsForGetData["min_chapter"];
+    sortType = widget.argumentsForGetData["sortType"];
+    genres = widget.argumentsForGetData["genres"];
+
+    // print(widget.argumentsForGetData);
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.atEdge) {
+        if (_scrollController.position.pixels == 0) {
+        } else {
+          setState(() {
+            this.isLoadingMore = true;
+            getMoreData();
+          });
+        }
+      }
+    });
+
+    getData();
+  }
+
+  Future getMoreData() async {
+    // limit = 36 ;
+
+    setState(() {
+      offset = offset + 36;
+    });
+
+    var apiResult = await SearchScreenService().getFilterData(
+        offset: offset,
+        full: full,
+        maxChapter: maxChapter,
+        minChapter: minChapter,
+        sortType: sortType,
+        genres: genres);
+
+    setState(() {
+      resultData = resultData + apiResult;
+      this.isLoadingMore = false;
+    });
+  }
+
+  Future getData() async {
+    var apiResult = await SearchScreenService().getFilterData(
+        offset: offset,
+        full: full,
+        maxChapter: maxChapter,
+        minChapter: minChapter,
+        sortType: sortType,
+        genres: genres);
+
+    setState(() {
+      resultData = apiResult;
+      this.isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +112,9 @@ class FilterResultScreen extends StatelessWidget {
       ),
       backgroundColor: Colors.white,
       floatingActionButton: Container(
-        height: 50.0,
-        width: 50.0,
+        height: 45.0,
+        width: 45.0,
+        margin: EdgeInsets.only(bottom: 10),
         child: FittedBox(
           child: FloatingActionButton(
             onPressed: () {
@@ -47,6 +135,11 @@ class FilterResultScreen extends StatelessWidget {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(7.5)),
                             placeholder: "Nhập số trang",
+                            onSubmitted: (value) {
+                              setState(() {
+                                // offset = value * 36;
+                              });
+                            },
                           ),
                         ),
                         actions: <Widget>[
@@ -90,6 +183,7 @@ class FilterResultScreen extends StatelessWidget {
         thickness: 5,
         interactive: true,
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 15.0),
             color: Colors.white,
@@ -97,102 +191,126 @@ class FilterResultScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                isLoading
+                    ? Container()
+                    : resultData.length == 0
+                        ? Container(
+                            height: MediaQuery.of(context).size.height * 0.85,
+                            child: Center(
+                              child: Text(
+                                "Không có truyện nào phù hợp yêu cầu.",
+                                style: kMediumDarkerTitleTextStyle,
+                              ),
+                            ),
+                          )
+                        : Container(),
                 ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
-                  itemCount: 10,
+                  itemCount: isLoading ? 10 : resultData.length,
                   itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: Padding(
-                                padding: EdgeInsets.only(right: 10.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Tên truyện",
-                                      style: TextStyle(
-                                          color: Colors.blue, fontSize: 18),
-                                    ),
-                                    SizedBox(
-                                      height: 7.5,
-                                    ),
-                                    RichText(
-                                        overflow: TextOverflow.ellipsis,
-                                        text: TextSpan(children: [
-                                          new TextSpan(
-                                              text: "1 giờ trước  ",
-                                              style:
-                                                  kMediumBlackTitleTextStyle),
-                                          new TextSpan(
-                                              text: "Tên tác giả",
-                                              style: kMediumBlackTitleTextStyle)
-                                        ])),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    Text(
-                                      "40 chương",
-                                      style: kMediumBlackTitleTextStyle,
-                                    ),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    RichText(
-                                        overflow: TextOverflow.ellipsis,
-                                        text: TextSpan(children: [
-                                          new TextSpan(
-                                              text: "Thể loại 1 ",
-                                              style:
-                                                  kMediumBlackTitleTextStyle),
-                                          new TextSpan(
-                                              text: "Thể loại 2 ",
-                                              style:
-                                                  kMediumBlackTitleTextStyle),
-                                          new TextSpan(
-                                              text: "Thể loại 3 ",
-                                              style:
-                                                  kMediumBlackTitleTextStyle),
-                                          new TextSpan(
-                                              text: "Thể loại 4 ",
-                                              style:
-                                                  kMediumBlackTitleTextStyle),
-                                          new TextSpan(
-                                              text: "Thể loại 4 ",
-                                              style:
-                                                  kMediumBlackTitleTextStyle),
-                                        ]))
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                                flex: 1,
-                                child: Container(
-                                  width: 50,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                      color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                ))
-                          ],
-                        ),
-                        Divider(
-                          height: 40.0,
-                          thickness: 1.1,
-                          color: Colors.black54,
-                        )
-                      ],
-                    );
+                    return isLoading
+                        ? CustomTileSkeleton()
+                        : CustomTile(currentItem: resultData[index]);
+                    // return Column(
+                    //   children: [
+                    //     Row(
+                    //       mainAxisAlignment: MainAxisAlignment.start,
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Expanded(
+                    //           flex: 4,
+                    //           child: Padding(
+                    //             padding: EdgeInsets.only(right: 10.0),
+                    //             child: Column(
+                    //               crossAxisAlignment: CrossAxisAlignment.start,
+                    //               children: [
+                    //                 Text(
+                    //                   "Tên truyện",
+                    //                   style: TextStyle(
+                    //                       color: Colors.blue, fontSize: 18),
+                    //                 ),
+                    //                 SizedBox(
+                    //                   height: 7.5,
+                    //                 ),
+                    //                 RichText(
+                    //                     overflow: TextOverflow.ellipsis,
+                    //                     text: TextSpan(children: [
+                    //                       new TextSpan(
+                    //                           text: "1 giờ trước  ",
+                    //                           style:
+                    //                               kMediumBlackTitleTextStyle),
+                    //                       new TextSpan(
+                    //                           text: "Tên tác giả",
+                    //                           style: kMediumBlackTitleTextStyle)
+                    //                     ])),
+                    //                 SizedBox(
+                    //                   height: 5.0,
+                    //                 ),
+                    //                 Text(
+                    //                   "40 chương",
+                    //                   style: kMediumBlackTitleTextStyle,
+                    //                 ),
+                    //                 SizedBox(
+                    //                   height: 5.0,
+                    //                 ),
+                    //                 RichText(
+                    //                     overflow: TextOverflow.ellipsis,
+                    //                     text: TextSpan(children: [
+                    //                       new TextSpan(
+                    //                           text: "Thể loại 1 ",
+                    //                           style:
+                    //                               kMediumBlackTitleTextStyle),
+                    //                       new TextSpan(
+                    //                           text: "Thể loại 2 ",
+                    //                           style:
+                    //                               kMediumBlackTitleTextStyle),
+                    //                       new TextSpan(
+                    //                           text: "Thể loại 3 ",
+                    //                           style:
+                    //                               kMediumBlackTitleTextStyle),
+                    //                       new TextSpan(
+                    //                           text: "Thể loại 4 ",
+                    //                           style:
+                    //                               kMediumBlackTitleTextStyle),
+                    //                       new TextSpan(
+                    //                           text: "Thể loại 4 ",
+                    //                           style:
+                    //                               kMediumBlackTitleTextStyle),
+                    //                     ]))
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         ),
+                    //         Expanded(
+                    //             flex: 1,
+                    //             child: Container(
+                    //               width: 50,
+                    //               height: 100,
+                    //               decoration: BoxDecoration(
+                    //                   color: Colors.grey[300],
+                    //                   borderRadius: BorderRadius.circular(5.0)),
+                    //             ))
+                    //       ],
+                    //     ),
+                    //     Divider(
+                    //       height: 40.0,
+                    //       thickness: 1.1,
+                    //       color: Colors.black54,
+                    //     )
+                    //   ],
+                    // );
                   },
-                )
+                ),
+                isLoadingMore
+                    ? Container(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: CupertinoActivityIndicator(
+                          radius: 20,
+                        ),
+                      )
+                    : Container()
               ],
             ),
           ),

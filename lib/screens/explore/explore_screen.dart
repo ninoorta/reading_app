@@ -175,58 +175,60 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           // crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  flex: 4,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      print("move to $currentItemID");
-                                      pushNewScreen(context,
-                                          screen: OtherGroupScreen(
-                                              groupID: currentItemID,
-                                              groupTitle: currentItemTitle),
-                                          withNavBar: true,
-                                          pageTransitionAnimation:
-                                              PageTransitionAnimation
-                                                  .cupertino);
-                                    },
-                                    child: RichText(
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        text: TextSpan(children: [
-                                          new TextSpan(
-                                              text: currentItem["title"],
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 15))
-                                        ])),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      print("move to $currentItemID");
+                            GestureDetector(
+                              child: Container(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: RichText(
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          text: TextSpan(children: [
+                                            new TextSpan(
+                                                text: currentItem["title"],
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 15))
+                                          ])),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          print("move to $currentItemID");
 
-                                      pushNewScreen(context,
-                                          screen: OtherGroupScreen(
-                                              groupID: currentItemID,
-                                              groupTitle: currentItemTitle),
-                                          withNavBar: true,
-                                          pageTransitionAnimation:
-                                              PageTransitionAnimation
-                                                  .cupertino);
-                                    },
-                                    icon: Icon(Icons.arrow_forward_ios),
-                                    padding: EdgeInsets.zero,
-                                    color: Colors.grey[500],
-                                    iconSize: 20,
-                                  ),
-                                )
-                              ],
+                                          pushNewScreen(context,
+                                              screen: OtherGroupScreen(
+                                                  groupID: currentItemID,
+                                                  groupTitle: currentItemTitle),
+                                              withNavBar: true,
+                                              pageTransitionAnimation:
+                                                  PageTransitionAnimation
+                                                      .cupertino);
+                                        },
+                                        icon: Icon(Icons.arrow_forward_ios),
+                                        padding: EdgeInsets.zero,
+                                        color: Colors.grey[500],
+                                        iconSize: 20,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              onTap: () {
+                                print("move to $currentItemID");
+                                pushNewScreen(context,
+                                    screen: OtherGroupScreen(
+                                        groupID: currentItemID,
+                                        groupTitle: currentItemTitle),
+                                    withNavBar: true,
+                                    pageTransitionAnimation:
+                                        PageTransitionAnimation.cupertino);
+                              },
                             ),
                             index != otherList.length - 1
                                 ? Divider(
