@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:reading_app/constants.dart';
 import 'package:reading_app/screens/explore/components/custom_tile.dart';
 import 'package:reading_app/screens/explore/components/custom_tile_skeleton.dart';
@@ -19,6 +20,7 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
   bool isLoadingMore = false;
   List resultData = [];
   int offset = 0;
+  int pageNumber = 1;
 
   int full = 2;
   int maxChapter = 6000;
@@ -61,6 +63,7 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
 
     setState(() {
       offset = offset + 36;
+      this.pageNumber = this.pageNumber + 1;
     });
 
     var apiResult = await SearchScreenService().getFilterData(
@@ -78,6 +81,7 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
   }
 
   Future getData() async {
+    this.isLoading = true;
     var apiResult = await SearchScreenService().getFilterData(
         offset: offset,
         full: full,
@@ -117,7 +121,7 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
         margin: EdgeInsets.only(bottom: 10),
         child: FittedBox(
           child: FloatingActionButton(
-            onPressed: () {
+            onPressed: () async {
               print("user click to open dialog");
               showDialog(
                   context: context,
@@ -129,15 +133,31 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
                         content: Container(
                           margin: EdgeInsets.only(top: 15.0),
                           child: CupertinoTextField(
+                            keyboardType: TextInputType.number,
                             autofocus: true,
                             padding: EdgeInsets.all(10.0),
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(7.5)),
                             placeholder: "Nhập số trang",
-                            onSubmitted: (value) {
+                            onChanged: (userInput) {
+                              print("userInput onChanged: $userInput");
                               setState(() {
-                                // offset = value * 36;
+                                // print("user input : $userInput");
+                                // this.offset = 36 * (int.parse(userInput) - 1);
+                                this.offset = 36 * (int.parse(userInput) - 1);
+                              });
+                            },
+                            onSubmitted: (newValue) {
+                              print("user pressed enter $newValue");
+                              setState(() {
+                                print("user input : $newValue");
+
+                                this.offset = 36 * (int.parse(newValue) - 1);
+                                this.pageNumber = int.parse(newValue);
+                                Navigator.of(context).pop();
+
+                                getData();
                               });
                             },
                           ),
@@ -167,13 +187,19 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
                             onPressed: () {
                               print("user chose ok");
                               Navigator.of(context).pop();
+                              setState(() {
+                                // getData();
+                                print("current offset ${this.offset}");
+                                this.pageNumber = (this.offset ~/ 36) + 1;
+                                getData();
+                              });
                             },
                           ),
                         ],
                       ));
             },
             child: Text(
-              "1",
+              pageNumber.toString(),
               style: TextStyle(color: Colors.white, fontSize: 18),
             ),
           ),
@@ -303,14 +329,14 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
                     // );
                   },
                 ),
-                isLoadingMore
-                    ? Container(
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: CupertinoActivityIndicator(
-                          radius: 20,
-                        ),
-                      )
-                    : Container()
+                // isLoadingMore
+                //     ? Container(
+                //         padding: EdgeInsets.symmetric(vertical: 10),
+                //         child: CupertinoActivityIndicator(
+                //           radius: 20,
+                //         ),
+                //       )
+                //     : Container()
               ],
             ),
           ),

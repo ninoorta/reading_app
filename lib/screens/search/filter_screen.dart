@@ -130,15 +130,12 @@ class _FilterScreenState extends State<FilterScreen> {
 
               switch (selectedStatusCondition) {
                 case "Tất cả":
-                  print("true 2");
                   full = 2;
                   break;
                 case "Full":
-                  print("full");
                   full = 1;
                   break;
                 case "Đang ra":
-                  print("full");
                   full = 0;
                   break;
               }
