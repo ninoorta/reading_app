@@ -141,7 +141,7 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
                                 borderRadius: BorderRadius.circular(7.5)),
                             placeholder: "Nhập số trang",
                             onChanged: (userInput) {
-                              print("userInput onChanged: $userInput");
+                              // print("userInput onChanged: $userInput");
                               setState(() {
                                 // print("user input : $userInput");
                                 // this.offset = 36 * (int.parse(userInput) - 1);
@@ -149,9 +149,9 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
                               });
                             },
                             onSubmitted: (newValue) {
-                              print("user pressed enter $newValue");
+                              // print("user pressed enter $newValue");
                               setState(() {
-                                print("user input : $newValue");
+                                // print("user input : $newValue");
 
                                 this.offset = 36 * (int.parse(newValue) - 1);
                                 this.pageNumber = int.parse(newValue);
@@ -173,7 +173,7 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
                                   color: Colors.blue),
                             ),
                             onPressed: () {
-                              print("user chose cancel");
+                              // print("user chose cancel");
                               Navigator.of(context).pop();
                             },
                           ),
@@ -185,11 +185,10 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.blue)),
                             onPressed: () {
-                              print("user chose ok");
+                              // print("user chose ok");
                               Navigator.of(context).pop();
                               setState(() {
-                                // getData();
-                                print("current offset ${this.offset}");
+                                // print("current offset ${this.offset}");
                                 this.pageNumber = (this.offset ~/ 36) + 1;
                                 getData();
                               });
