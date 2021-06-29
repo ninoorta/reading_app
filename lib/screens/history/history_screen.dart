@@ -1,141 +1,97 @@
 import 'package:flutter/material.dart';
-import 'package:reading_app/screens/history/history_detail_screen.dart';
+import 'package:reading_app/database/story_db.dart';
 
 import '../../constants.dart';
+import 'components/build_history_list.dart';
 
-class HistoryScreen extends StatelessWidget {
+class HistoryScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Lịch Sử Đọc Truyện",
-          style: kTitleTextStyle,
-        ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.white,
-      ),
-      body: Scrollbar(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
-            margin: EdgeInsets.only(bottom: 10.0),
-            color: Colors.white,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                BuildHistoryList(
-                  title: "Đọc Gần Đây",
-                ),
-                BuildHistoryList(
-                  title: "Yêu Thích Gần Đây",
-                ),
-                BuildHistoryList(
-                  title: "Tải Gần Đây",
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  _HistoryScreenState createState() => _HistoryScreenState();
 }
 
-class BuildHistoryList extends StatelessWidget {
-  const BuildHistoryList({Key? key, required this.title}) : super(key: key);
+class _HistoryScreenState extends State<HistoryScreen> {
+  bool isLoading = true;
+  List recentReadData = [];
+  late StoryDatabase storyDatabase;
 
-  final String title;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    storyDatabase = StoryDatabase();
+    getLocalData();
+  }
+
+  Future getLocalData() async {
+    var data = await storyDatabase.getData();
+    setState(() {
+      recentReadData = data;
+      // debugPrint("hey it's local recent read data $recentReadData",
+      //     wrapWidth: 1024);
+      this.isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.black,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "Lịch Sử Đọc Truyện",
+            style: kTitleTextStyle,
+          ),
+          centerTitle: true,
+          elevation: 0,
+          backgroundColor: Colors.white,
+        ),
+        body: Scrollbar(
+          child: SingleChildScrollView(
+            child: SizedBox(
+              child: Container(
+                height: MediaQuery.of(context).size.height -
+                    AppBar().preferredSize.height,
+                padding: EdgeInsets.symmetric(horizontal: 15.0),
+                margin: EdgeInsets.only(bottom: 10.0),
+                color: Colors.white,
+                child: isLoading
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Center(
+                            child: Container(
+                              child: Text(
+                                "Đang tải...",
+                                style: kListTitleTextStyle,
+                              ),
+                            ),
+                          )
+                        ],
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          BuildHistoryList(
+                            title: "Đọc Gần Đây",
+                            data:
+                                recentReadData.isEmpty ? null : recentReadData,
+                          ),
+                          BuildHistoryList(
+                            title: "Yêu Thích Gần Đây",
+                          ),
+                          BuildHistoryList(
+                            title: "Tải Gần Đây",
+                          ),
+                        ],
+                      ),
               ),
             ),
-            IconButton(
-              onPressed: () {
-                print("user click to see more");
-
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return HistoryDetail();
-                }));
-              },
-              icon: Icon(Icons.arrow_forward_ios),
-              iconSize: 20,
-            )
-          ],
-        ),
-        Container(
-          // height: 600,
-          child: GridView.builder(
-            padding: EdgeInsets.zero,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: 8,
-            shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              childAspectRatio: 0.5,
-              crossAxisSpacing: 10.0,
-              // mainAxisSpacing: 10.0
-            ),
-            itemBuilder: (context, index) {
-              return Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(5.0)),
-                    // width: 100,
-                    height: 100,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  RichText(
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    text: TextSpan(children: [
-                      new TextSpan(
-                          text:
-                              "This is the title of the story but it seems to be so longgggggggggggggggggggggggggg",
-                          style: TextStyle(fontSize: 16, color: Colors.black)),
-                      new TextSpan(
-                          text:
-                              "This is the title of the story but it seems to be so longgggggggggggggggggggggggggg",
-                          style: TextStyle(fontSize: 16, color: Colors.black)),
-                      new TextSpan(
-                          text:
-                              "This is the title of the story but it seems to be so longgggggggggggggggggggggggggg",
-                          style: TextStyle(fontSize: 16, color: Colors.black)),
-                    ]),
-                  )
-                ],
-              );
-            },
           ),
         ),
-        // ListView.builder(
-        //   itemCount: 4,
-        //
-        //
-        // )
-      ],
+      ),
     );
   }
 }

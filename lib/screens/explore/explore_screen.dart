@@ -32,10 +32,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
     "Đô Thị"
   ];
 
+  // late StoryDatabase storyDatabase;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    // storyDatabase = StoryDatabase();
 
     // Future.delayed(Duration(seconds: 5), () {
     //   setState(() {

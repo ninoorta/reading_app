@@ -1,19 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:reading_app/database/story_db.dart';
+import 'package:reading_app/models/story.dart';
 // services
 import 'package:reading_app/services/story_detail_screen_service.dart';
+import 'package:reading_app/services/story_info_screen_service.dart';
 
 import 'menu_chapters_screen.dart';
 
 class ReadingScreen extends StatefulWidget {
-  ReadingScreen(
-      {Key? key,
-      required this.storyTitle,
-      required this.storyID,
-      required this.chaptersCount,
-      required this.currentChapterNumber})
-      : super(key: key);
+  ReadingScreen({
+    Key? key,
+    required this.storyTitle,
+    required this.storyID,
+    required this.chaptersCount,
+    required this.currentChapterNumber,
+  }) : super(key: key);
 
   final String storyID;
   final String storyTitle;
@@ -28,10 +31,15 @@ class _ReadingScreenState extends State<ReadingScreen> {
   bool visible = false;
   bool isLoading = true;
   Map storyData = {};
+  Map storyToStore = {};
 
   String chapterTitle = "";
   String chapterContent = "";
   int currentChapterNumber = 1;
+
+  late StoryDatabase storyDatabase = StoryDatabase();
+
+  List test = [];
 
   @override
   void initState() {
@@ -40,21 +48,47 @@ class _ReadingScreenState extends State<ReadingScreen> {
 
     visible = true;
     currentChapterNumber = widget.currentChapterNumber;
+    print("user current chapter number $currentChapterNumber");
     getData();
   }
 
-  void getData() async {
+  Future getStoryDataToStore() async {
+    var apiResult =
+        await StoreInfoScreenService(storeID: widget.storyID).getData();
+
+    setState(() {
+      this.storyToStore = apiResult;
+    });
+  }
+
+  Future getData() async {
     isLoading = true;
+    await getStoryDataToStore();
     storyData = await StoryDetailScreenService(
             storyID: widget.storyID, chapterNumber: currentChapterNumber)
         .getData();
 
+    // debugPrint("story to store ${this.storyToStore}", wrapWidth: 1024);
     setState(() {
       visible = false;
       isLoading = false;
 
       chapterTitle = storyData["title"];
       chapterContent = storyData["content"];
+
+      var dataToStore = storyData;
+      dataToStore["currentChapterNumber"] = currentChapterNumber;
+
+      // debugPrint("story data to store : ${this.storyToStore}", wrapWidth: 1024);
+
+      storyDatabase.insertStory(StoryModel(
+          storyID: storyToStore["_id"]["\$oid"],
+          author: storyToStore["author"],
+          cover: storyToStore["cover"],
+          full: storyToStore["full"] == true ? 1 : 0,
+          title: storyToStore["title"],
+          chapter_count: storyToStore["chapter_count"],
+          currentChapterNumber: this.currentChapterNumber));
     });
   }
 
@@ -69,7 +103,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
                   overflow: TextOverflow.ellipsis,
                   text: TextSpan(children: [
                     new TextSpan(
-                        text: chapterTitle,
+                        text: widget.storyTitle,
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 22,
@@ -83,7 +117,8 @@ class _ReadingScreenState extends State<ReadingScreen> {
                     size: 25,
                     color: Colors.blue,
                   ),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () =>
+                      Navigator.pop(context, this.currentChapterNumber),
                 ),
                 elevation: 0,
                 actions: [

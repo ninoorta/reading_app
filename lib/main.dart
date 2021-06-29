@@ -7,7 +7,16 @@ import 'package:reading_app/screens/search/search_screen.dart';
 
 import 'screens/explore/explore_screen.dart';
 
-void main() {
+Future<void> main() async {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await SystemChrome.setPreferredOrientations(
+  //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  //
+  // print("start init");
+  // // await StoryPreferences.init();
+  //
+  // print("finish init");
+
   runApp(MyApp());
 }
 

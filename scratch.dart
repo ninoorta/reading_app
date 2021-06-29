@@ -1,8 +1,4 @@
-import 'package:intl/intl.dart';
-
 void main() {
-  ConvertSecondsToDate();
-
   getDate(1618480018);
 }
 
@@ -20,23 +16,6 @@ String getDate(int seconds) {
   var year = convertedDate.year;
 
   return "$day - $month - $year";
-}
-
-void ConvertSecondsToDate() {
-  double from = 1622244730; // this is second
-  double to = 1623983164;
-  int timeInMillis = 1623654786;
-  double timeSpace = (from - to) / (60);
-  print("time space $timeSpace");
-  print("time space ${from - to}");
-
-  var nowInSeconds = DateTime.now().millisecondsSinceEpoch / 1000;
-  print("now $nowInSeconds");
-
-  var date = DateTime.fromMillisecondsSinceEpoch(
-      timeInMillis * 1000); // this is milisecond
-  var formattedDate = DateFormat.yMMMd().format(date); // Jun 14, 2021
-  print(formattedDate);
 }
 
 void getDateTime() {

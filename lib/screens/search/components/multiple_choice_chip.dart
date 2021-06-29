@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:reading_app/constants.dart';
 
 class MultipleChoiceChip extends StatefulWidget {
   final List<String> list;

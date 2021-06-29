@@ -8,9 +8,9 @@ import 'package:skeleton_text/skeleton_text.dart';
 import '../../../constants.dart';
 
 class MyCustomTile extends StatelessWidget {
-  MyCustomTile({Key? key, required this.currentItemData}) : super(key: key);
+  MyCustomTile({required this.currentItemData});
 
-  Map currentItemData;
+  final Map currentItemData;
 
   List<TextSpan> renderGenreWidget({required List genreList}) {
     List<TextSpan> list = [];
