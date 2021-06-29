@@ -6,6 +6,7 @@ import 'package:reading_app/constants.dart';
 import 'package:reading_app/database/story_db.dart';
 import 'package:reading_app/screens/story_info/story_info.dart';
 import 'package:skeleton_text/skeleton_text.dart';
+import 'package:tiengviet/tiengviet.dart';
 
 class HistoryDetail extends StatefulWidget {
   const HistoryDetail({Key? key, required this.type, required this.isBlank})
@@ -54,7 +55,8 @@ class _HistoryDetailState extends State<HistoryDetail> {
   List findWithName(String searchString) {
     List list = [];
     for (var i = 0; i < listToShow.length; i++) {
-      if (listToShow[i]["title"].contains(searchString)) {
+      if (TiengViet.parse(listToShow[i]["title"].trim().toLowerCase())
+          .contains(TiengViet.parse(searchString))) {
         list.add(listToShow[i]);
       }
     }
@@ -116,13 +118,14 @@ class _HistoryDetailState extends State<HistoryDetail> {
                               print("user $userInput");
                               setState(() {
                                 // listToShow = listToShow.contains(userInput)
-                                var holder = findWithName(userInput.trim());
+                                userInput = userInput.trim().toLowerCase();
+                                var holder = findWithName(userInput);
                                 if (holder == []) {
                                   this.haveData = false;
                                 } else {
                                   listToShow = holder;
                                 }
-                                if (userInput.trim() == "") {
+                                if (userInput == "") {
                                   listToShow = dataHolder;
                                 }
                               });

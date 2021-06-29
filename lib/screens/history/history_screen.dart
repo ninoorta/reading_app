@@ -46,47 +46,56 @@ class _HistoryScreenState extends State<HistoryScreen> {
           elevation: 0,
           backgroundColor: Colors.white,
         ),
-        body: Scrollbar(
-          child: SingleChildScrollView(
-            child: SizedBox(
-              child: Container(
-                height: MediaQuery.of(context).size.height -
-                    AppBar().preferredSize.height,
-                padding: EdgeInsets.symmetric(horizontal: 15.0),
-                margin: EdgeInsets.only(bottom: 10.0),
-                color: Colors.white,
-                child: isLoading
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Center(
-                            child: Container(
-                              child: Text(
-                                "Đang tải...",
-                                style: kListTitleTextStyle,
+        body: RefreshIndicator(
+          triggerMode: RefreshIndicatorTriggerMode.onEdge,
+          onRefresh: () async {
+            setState(() {
+              getLocalData();
+            });
+          },
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              child: SizedBox(
+                child: Container(
+                  height: MediaQuery.of(context).size.height -
+                      AppBar().preferredSize.height,
+                  padding: EdgeInsets.symmetric(horizontal: 15.0),
+                  margin: EdgeInsets.only(bottom: 10.0),
+                  color: Colors.white,
+                  child: isLoading
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Center(
+                              child: Container(
+                                child: Text(
+                                  "Đang tải...",
+                                  style: kListTitleTextStyle,
+                                ),
                               ),
+                            )
+                          ],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            BuildHistoryList(
+                              title: "Đọc Gần Đây",
+                              data: recentReadData.isEmpty
+                                  ? null
+                                  : recentReadData,
                             ),
-                          )
-                        ],
-                      )
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          BuildHistoryList(
-                            title: "Đọc Gần Đây",
-                            data:
-                                recentReadData.isEmpty ? null : recentReadData,
-                          ),
-                          BuildHistoryList(
-                            title: "Yêu Thích Gần Đây",
-                          ),
-                          BuildHistoryList(
-                            title: "Tải Gần Đây",
-                          ),
-                        ],
-                      ),
+                            BuildHistoryList(
+                              title: "Yêu Thích Gần Đây",
+                            ),
+                            BuildHistoryList(
+                              title: "Tải Gần Đây",
+                            ),
+                          ],
+                        ),
+                ),
               ),
             ),
           ),

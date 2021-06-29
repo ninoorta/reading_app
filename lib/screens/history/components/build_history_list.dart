@@ -51,7 +51,7 @@ class BuildHistoryList extends StatelessWidget {
                 print("user clicks to see more");
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return HistoryDetail(
-                      type: "read", isBlank: data == [] ? true : false);
+                      type: "read", isBlank: data == null ? true : false);
                 }));
               },
               icon: Icon(Icons.arrow_forward_ios),
@@ -84,7 +84,7 @@ class BuildHistoryList extends StatelessWidget {
                             child: CachedNetworkImage(
                               imageUrl: currentItem["cover"],
                               width: 90,
-                              height: 120,
+                              height: 110,
                               progressIndicatorBuilder:
                                   (context, url, progress) {
                                 return SkeletonAnimation(
@@ -103,11 +103,14 @@ class BuildHistoryList extends StatelessWidget {
                           onTap: () {
                             pushNewScreen(context,
                                 screen:
-                                    StoryInfo(storyID: currentItem["storyID"]));
+                                    StoryInfo(storyID: currentItem["storyID"]),
+                                withNavBar: false,
+                                pageTransitionAnimation:
+                                    PageTransitionAnimation.cupertino);
                           },
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 5,
                         ),
                         GestureDetector(
                           child: RichText(
@@ -123,7 +126,10 @@ class BuildHistoryList extends StatelessWidget {
                           onTap: () {
                             pushNewScreen(context,
                                 screen:
-                                    StoryInfo(storyID: currentItem["storyID"]));
+                                    StoryInfo(storyID: currentItem["storyID"]),
+                                withNavBar: false,
+                                pageTransitionAnimation:
+                                    PageTransitionAnimation.cupertino);
                           },
                         )
                       ],
