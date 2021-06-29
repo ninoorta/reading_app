@@ -23,6 +23,7 @@ class _HistoryDetailState extends State<HistoryDetail> {
   List listToShow = [];
   List dataHolder = [];
   bool haveData = false;
+  bool isDeleted = false;
 
   late StoryDatabase storyDatabase;
   TextEditingController _textEditingController = TextEditingController();
@@ -76,11 +77,48 @@ class _HistoryDetailState extends State<HistoryDetail> {
         elevation: 0,
         leading: BackButton(
           color: Colors.blue,
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context, this.isDeleted),
         ),
         actions: [
           TextButton(
-              onPressed: () {},
+              onPressed: () {
+                showCupertinoDialog(
+                  context: context,
+                  builder: (context) => CupertinoAlertDialog(
+                    title: Text("Xác Nhận"),
+                    content: Text(
+                      "Bạn muốn xóa tất cả ?",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    actions: [
+                      CupertinoDialogAction(
+                        isDefaultAction: true,
+                        child: Text(
+                          "Không",
+                          style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      CupertinoDialogAction(
+                        isDefaultAction: true,
+                        child: Text(
+                          "Xóa Tất Cả",
+                          style: TextStyle(color: Colors.red, fontSize: 18),
+                        ),
+                        onPressed: () async => setState(() async {
+                          await storyDatabase.deleteAll();
+                          await getLocalData();
+                          this.isDeleted = true;
+                          Navigator.pop(context);
+                        }),
+                      ),
+                    ],
+                  ),
+                );
+              },
               child: Text(
                 "Xóa Tất Cả",
                 style: TextStyle(color: Colors.blue, fontSize: 20),

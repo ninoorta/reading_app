@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:reading_app/screens/story_info/story_info.dart';
@@ -6,17 +7,22 @@ import 'package:skeleton_text/skeleton_text.dart';
 
 import '../history_detail_screen.dart';
 
-class BuildHistoryList extends StatelessWidget {
-  BuildHistoryList({Key? key, required this.title, this.data})
+class BuildHistoryList extends StatefulWidget {
+  BuildHistoryList(
+      {Key? key, required this.title, this.data, required this.forRefreshFunc})
       : super(key: key);
 
   final String title;
   final List? data;
+  final forRefreshFunc;
 
   @override
+  _BuildHistoryListState createState() => _BuildHistoryListState();
+}
+
+class _BuildHistoryListState extends State<BuildHistoryList> {
+  @override
   Widget build(BuildContext context) {
-    print("have data? $data");
-    print("have data? ${data == null}");
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,12 +38,20 @@ class BuildHistoryList extends StatelessWidget {
 
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return HistoryDetail(
-                        type: "read", isBlank: data == null ? true : false);
-                  }));
+                        type: "read",
+                        isBlank: widget.data == null ? true : false);
+                  })).then((value) {
+                    if (value) {
+                      setState(() {
+                        print("all in this field has been deleted");
+                        widget.forRefreshFunc();
+                      });
+                    }
+                  });
                 },
                 child: Container(
                   child: Text(
-                    title,
+                    widget.title,
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.black,
@@ -51,7 +65,8 @@ class BuildHistoryList extends StatelessWidget {
                 print("user clicks to see more");
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return HistoryDetail(
-                      type: "read", isBlank: data == null ? true : false);
+                      type: "read",
+                      isBlank: widget.data == null ? true : false);
                 }));
               },
               icon: Icon(Icons.arrow_forward_ios),
@@ -59,14 +74,14 @@ class BuildHistoryList extends StatelessWidget {
             )
           ],
         ),
-        data == null
+        widget.data == null
             ? Container()
             : Container(
                 // height: 600,
                 child: GridView.builder(
                   padding: EdgeInsets.zero,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: data!.length >= 8 ? 8 : data!.length,
+                  itemCount: widget.data!.length >= 8 ? 8 : widget.data!.length,
                   shrinkWrap: true,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4,
@@ -75,7 +90,7 @@ class BuildHistoryList extends StatelessWidget {
                     // mainAxisSpacing: 10.0
                   ),
                   itemBuilder: (context, index) {
-                    var currentItem = data![index];
+                    var currentItem = widget.data![index];
                     return Column(
                       children: <Widget>[
                         GestureDetector(

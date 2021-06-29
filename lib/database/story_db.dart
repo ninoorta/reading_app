@@ -64,7 +64,12 @@ class StoryDatabase {
     return result;
   }
 
-  Future deleteAll() async {}
+  Future deleteAll() async {
+    final Database db = await createDatabase();
+    await db.rawDelete(""
+        "DELETE FROM Stories"
+        "");
+  }
 
 // Future close() async {
 //   final db = await instance.database;
