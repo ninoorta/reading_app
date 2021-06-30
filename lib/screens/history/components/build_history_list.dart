@@ -8,12 +8,13 @@ import 'package:skeleton_text/skeleton_text.dart';
 import '../history_detail_screen.dart';
 
 class BuildHistoryList extends StatefulWidget {
-  BuildHistoryList({Key? key, required this.title, this.data})
+  BuildHistoryList(
+      {Key? key, required this.title, this.data, required this.refreshFunc})
       : super(key: key);
 
   final String title;
   final List? data;
-  // final forRefreshFunc;
+  final refreshFunc;
 
   @override
   _BuildHistoryListState createState() => _BuildHistoryListState();
@@ -32,24 +33,21 @@ class _BuildHistoryListState extends State<BuildHistoryList> {
           children: <Widget>[
             Expanded(
               child: GestureDetector(
-                onTap: () {
+                onTap: () async {
                   print("user clicks to see more");
 
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  var isDeleted = await Navigator.push(context,
+                      MaterialPageRoute(builder: (context) {
                     return HistoryDetail(
                         type: "read",
                         isBlank: widget.data == null ? true : false);
-                  }))
-                      //     .then((value) {
-                      //   if (value) {
-                      //     setState(() {
-                      //       print("all in this field has been deleted");
-                      //       // widget.forRefreshFunc();
-                      //     });
-                      //   }
-                      // }
-                      // )
-                      ;
+                  }));
+
+                  print("is Deleted $isDeleted");
+                  if (isDeleted) {
+                    print("should refresh");
+                    widget.refreshFunc();
+                  }
                 },
                 child: Container(
                   child: Text(
@@ -63,13 +61,19 @@ class _BuildHistoryListState extends State<BuildHistoryList> {
               ),
             ),
             IconButton(
-              onPressed: () {
+              onPressed: () async {
                 print("user clicks to see more");
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                var isDeleted = await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) {
                   return HistoryDetail(
                       type: "read",
                       isBlank: widget.data == null ? true : false);
                 }));
+                print("is Deleted $isDeleted");
+                if (isDeleted) {
+                  print("should refresh");
+                  widget.refreshFunc();
+                }
               },
               icon: Icon(Icons.arrow_forward_ios),
               iconSize: 20,

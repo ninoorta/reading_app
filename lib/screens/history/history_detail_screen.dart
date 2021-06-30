@@ -104,16 +104,16 @@ class _HistoryDetailState extends State<HistoryDetail> {
                           ),
                           actions: [
                             CupertinoDialogAction(
-                              isDefaultAction: true,
-                              child: Text(
-                                "Không",
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              onPressed: () => Navigator.pop(context),
-                            ),
+                                isDefaultAction: true,
+                                child: Text(
+                                  "Không",
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onPressed: () =>
+                                    Navigator.pop(context, this.isDeleted)),
                             CupertinoDialogAction(
                                 isDefaultAction: true,
                                 child: Text(
@@ -126,7 +126,7 @@ class _HistoryDetailState extends State<HistoryDetail> {
                                   await getLocalData();
                                   setState(() {
                                     this.isDeleted = true;
-                                    Navigator.pop(context);
+                                    Navigator.pop(context, this.isDeleted);
                                   });
                                 }),
                           ],
