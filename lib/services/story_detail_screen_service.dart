@@ -9,7 +9,7 @@ class StoryDetailScreenService {
   StoryDetailScreenService(
       {required this.storyID, required this.chapterNumber});
 
-  Future getData() async {
+  Future getChapterData() async {
     http.Response response = await http.get(Uri.parse(
         "http://api.noveltyt.net/api/v2/chapters/detail?number=$chapterNumber&story_id=${this.storyID}"));
 

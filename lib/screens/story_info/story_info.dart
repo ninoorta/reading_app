@@ -64,9 +64,14 @@ class _StoryInfoState extends State<StoryInfo> {
 
     print("storyID: ${widget.storyID}");
     storyDatabase = StoryDatabase();
-
     getData();
   }
+
+  // void dispose() {
+  //   storyDatabase.close();
+  //
+  //   super.dispose();
+  // }
 
   Future getDataFromDB() async {
     var localData = await storyDatabase.getData();
@@ -81,23 +86,24 @@ class _StoryInfoState extends State<StoryInfo> {
     });
   }
 
-  Future getDataTest() async {
-    test = await storyDatabase.getData();
-    setState(() {
-      debugPrint("test result $test", wrapWidth: 1024);
-    });
-  }
-
   Future getData() async {
     storyData = await StoreInfoScreenService(storeID: widget.storyID).getData();
+    // await getDataFromDB();
+
+    var findResult = await storyDatabase.findWithStoryID(widget.storyID);
 
     timeData = Time().convertTimeToDHMS(
         startTime: storyData["updated"],
         endTime: (DateTime.now().millisecondsSinceEpoch / 1000).ceil());
 
-    await getDataFromDB();
-    print("current ChapterNumber $currentChapterNumber");
     setState(() {
+      if (!findResult.isEmpty) {
+        this.currentChapterNumber = findResult[0]["currentChapterNumber"];
+        this.usedToRead = true;
+        print("current ChapterNumber $currentChapterNumber");
+      } else {
+        print("user never reads this one before");
+      }
       isLoading = false;
 
       if (timeData["days"] == 0) {

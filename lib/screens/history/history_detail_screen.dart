@@ -15,6 +15,8 @@ class HistoryDetail extends StatefulWidget {
   final String type;
   final bool isBlank;
 
+  // final List data;
+
   @override
   _HistoryDetailState createState() => _HistoryDetailState();
 }
@@ -24,6 +26,7 @@ class _HistoryDetailState extends State<HistoryDetail> {
   List dataHolder = [];
   bool haveData = false;
   bool isDeleted = false;
+  bool isLoading = true;
 
   late StoryDatabase storyDatabase;
   TextEditingController _textEditingController = TextEditingController();
@@ -33,10 +36,13 @@ class _HistoryDetailState extends State<HistoryDetail> {
     // TODO: implement initState
     super.initState();
 
-    print(widget.isBlank);
+    print("is Blank? ${widget.isBlank}");
     storyDatabase = StoryDatabase();
     if (!widget.isBlank) {
       getLocalData();
+    } else {
+      this.isLoading = false;
+      this.haveData = false;
     }
     // if (widget.type == "read" && widget.isBlank == false) {
     // }
@@ -47,10 +53,14 @@ class _HistoryDetailState extends State<HistoryDetail> {
   Future getLocalData() async {
     var data = await storyDatabase.getData();
     setState(() {
+      debugPrint("data from local $data", wrapWidth: 1024);
       listToShow = data;
       dataHolder = data;
-      this.haveData = true;
+
+      data == [] ? this.haveData = false : this.haveData = true;
+      this.isLoading = false;
     });
+    // storyDatabase.close();
   }
 
   List findWithName(String searchString) {
@@ -81,47 +91,54 @@ class _HistoryDetailState extends State<HistoryDetail> {
         ),
         actions: [
           TextButton(
-              onPressed: () {
-                showCupertinoDialog(
-                  context: context,
-                  builder: (context) => CupertinoAlertDialog(
-                    title: Text("Xác Nhận"),
-                    content: Text(
-                      "Bạn muốn xóa tất cả ?",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    actions: [
-                      CupertinoDialogAction(
-                        isDefaultAction: true,
-                        child: Text(
-                          "Không",
-                          style: TextStyle(
-                              color: Colors.blue,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
+              onPressed: widget.isBlank == true
+                  ? null
+                  : () {
+                      showCupertinoDialog(
+                        context: context,
+                        builder: (context) => CupertinoAlertDialog(
+                          title: Text("Xác Nhận"),
+                          content: Text(
+                            "Bạn muốn xóa tất cả ?",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          actions: [
+                            CupertinoDialogAction(
+                              isDefaultAction: true,
+                              child: Text(
+                                "Không",
+                                style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                            CupertinoDialogAction(
+                                isDefaultAction: true,
+                                child: Text(
+                                  "Xóa Tất Cả",
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 18),
+                                ),
+                                onPressed: () async {
+                                  await storyDatabase.deleteAll();
+                                  await getLocalData();
+                                  setState(() {
+                                    this.isDeleted = true;
+                                    Navigator.pop(context);
+                                  });
+                                }),
+                          ],
                         ),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      CupertinoDialogAction(
-                        isDefaultAction: true,
-                        child: Text(
-                          "Xóa Tất Cả",
-                          style: TextStyle(color: Colors.red, fontSize: 18),
-                        ),
-                        onPressed: () async => setState(() async {
-                          await storyDatabase.deleteAll();
-                          await getLocalData();
-                          this.isDeleted = true;
-                          Navigator.pop(context);
-                        }),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                      );
+                    },
               child: Text(
                 "Xóa Tất Cả",
-                style: TextStyle(color: Colors.blue, fontSize: 20),
+                style: TextStyle(
+                    color:
+                        widget.isBlank == true ? Colors.grey[500] : Colors.blue,
+                    fontSize: 20),
               ))
         ],
       ),
@@ -300,7 +317,7 @@ class _HistoryDetailState extends State<HistoryDetail> {
                             AppBar().preferredSize.height,
                         child: Center(
                           child: Text(
-                            "Không có dữ liệu",
+                            isLoading ? "Đang tải..." : "Không có dữ liệu",
                             style: kTitleTextStyle,
                           ),
                         ),

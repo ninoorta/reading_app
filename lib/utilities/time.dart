@@ -27,19 +27,19 @@ class Time {
     timeDistance = endTime - startTime;
 
     days = (timeDistance / (60 * 60 * 24)).floor();
-    print("days $days");
+    // print("days $days");
 
     if (days == 0) {
       hours = (timeDistance / (60 * 60)).floor();
-      print("hours $hours");
+      // print("hours $hours");
 
       if (hours == 0) {
         minutes = (timeDistance / 60).floor();
-        print("minutes $minutes");
+        // print("minutes $minutes");
 
         if (minutes < 1) {
           seconds = timeDistance.floor();
-          print("seconds $seconds");
+          // print("seconds $seconds");
         }
       }
     }

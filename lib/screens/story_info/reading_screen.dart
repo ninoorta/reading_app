@@ -52,23 +52,33 @@ class _ReadingScreenState extends State<ReadingScreen> {
     getData();
   }
 
+  void dispose() {
+    super.dispose();
+  }
+
   Future getStoryDataToStore() async {
     var apiResult =
         await StoreInfoScreenService(storeID: widget.storyID).getData();
+    this.storyToStore = apiResult;
 
-    setState(() {
-      this.storyToStore = apiResult;
-    });
+    await storyDatabase.insertStory(StoryModel(
+        storyID: widget.storyID,
+        author: storyToStore["author"],
+        cover: storyToStore["cover"],
+        full: storyToStore["full"] == true ? 1 : 0,
+        title: storyToStore["title"],
+        chapter_count: storyToStore["chapter_count"],
+        currentChapterNumber: this.currentChapterNumber));
   }
 
   Future getData() async {
     isLoading = true;
-    await getStoryDataToStore();
     storyData = await StoryDetailScreenService(
             storyID: widget.storyID, chapterNumber: currentChapterNumber)
-        .getData();
+        .getChapterData();
 
     // debugPrint("story to store ${this.storyToStore}", wrapWidth: 1024);
+
     setState(() {
       visible = false;
       isLoading = false;
@@ -80,16 +90,10 @@ class _ReadingScreenState extends State<ReadingScreen> {
       dataToStore["currentChapterNumber"] = currentChapterNumber;
 
       // debugPrint("story data to store : ${this.storyToStore}", wrapWidth: 1024);
-
-      storyDatabase.insertStory(StoryModel(
-          storyID: storyToStore["_id"]["\$oid"],
-          author: storyToStore["author"],
-          cover: storyToStore["cover"],
-          full: storyToStore["full"] == true ? 1 : 0,
-          title: storyToStore["title"],
-          chapter_count: storyToStore["chapter_count"],
-          currentChapterNumber: this.currentChapterNumber));
     });
+    await getStoryDataToStore();
+    print("story author ${this.storyToStore["author"]}");
+    // 15:29
   }
 
   @override

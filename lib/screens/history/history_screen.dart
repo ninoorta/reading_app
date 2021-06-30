@@ -24,6 +24,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Future getLocalData() async {
+    print("${DateTime.now()} get localdata run");
     var data = await storyDatabase.getData();
     setState(() {
       recentReadData = data;
@@ -86,15 +87,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               data: recentReadData.isEmpty
                                   ? null
                                   : recentReadData,
-                              forRefreshFunc: this.getLocalData(),
+                              // forRefreshFunc: this.getLocalData(),
                             ),
                             BuildHistoryList(
                               title: "Yêu Thích Gần Đây",
-                              forRefreshFunc: this.getLocalData(),
+                              // forRefreshFunc: this.getLocalData(),
                             ),
                             BuildHistoryList(
                               title: "Tải Gần Đây",
-                              forRefreshFunc: this.getLocalData(),
+                              // forRefreshFunc: this.getLocalData(),
                             ),
                           ],
                         ),

@@ -8,13 +8,12 @@ import 'package:skeleton_text/skeleton_text.dart';
 import '../history_detail_screen.dart';
 
 class BuildHistoryList extends StatefulWidget {
-  BuildHistoryList(
-      {Key? key, required this.title, this.data, required this.forRefreshFunc})
+  BuildHistoryList({Key? key, required this.title, this.data})
       : super(key: key);
 
   final String title;
   final List? data;
-  final forRefreshFunc;
+  // final forRefreshFunc;
 
   @override
   _BuildHistoryListState createState() => _BuildHistoryListState();
@@ -40,14 +39,17 @@ class _BuildHistoryListState extends State<BuildHistoryList> {
                     return HistoryDetail(
                         type: "read",
                         isBlank: widget.data == null ? true : false);
-                  })).then((value) {
-                    if (value) {
-                      setState(() {
-                        print("all in this field has been deleted");
-                        widget.forRefreshFunc();
-                      });
-                    }
-                  });
+                  }))
+                      //     .then((value) {
+                      //   if (value) {
+                      //     setState(() {
+                      //       print("all in this field has been deleted");
+                      //       // widget.forRefreshFunc();
+                      //     });
+                      //   }
+                      // }
+                      // )
+                      ;
                 },
                 child: Container(
                   child: Text(
