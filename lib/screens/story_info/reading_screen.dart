@@ -132,14 +132,15 @@ class _ReadingScreenState extends State<ReadingScreen> {
                 ),
                 centerTitle: true,
                 leading: IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    size: 25,
-                    color: Colors.blue,
-                  ),
-                  onPressed: () =>
-                      Navigator.pop(context, this.currentChapterNumber),
-                ),
+                    icon: Icon(
+                      Icons.close,
+                      size: 25,
+                      color: Colors.blue,
+                    ),
+                    onPressed: () {
+                      print("close reading screen with $currentChapterNumber");
+                      Navigator.pop(context, this.currentChapterNumber);
+                    }),
                 elevation: 0,
                 actions: [
                   IconButton(
@@ -180,17 +181,6 @@ class _ReadingScreenState extends State<ReadingScreen> {
                     ),
                     IconButton(
                       onPressed: () {
-                        //
-                        // pushNewScreen(context,
-                        //     screen: MenuChapters(
-                        //       storyTitle: widget.storyTitle,
-                        //       storyID: widget.storyID,
-                        //       chaptersCount: widget.chapterCount,
-                        //     ),
-                        //     withNavBar: false,
-                        //     pageTransitionAnimation:
-                        //         PageTransitionAnimation.cupertino);
-
                         showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
@@ -203,6 +193,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
                               child: MenuChapters(
                                 storyTitle: widget.storyTitle,
                                 storyID: widget.storyID,
+                                currentChapter: widget.currentChapterNumber,
                                 chaptersCount: widget.chaptersCount,
                                 isFavorite: widget.isFavorite,
                                 fromReading: true,

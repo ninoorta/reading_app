@@ -228,6 +228,7 @@ class _StoryInfoState extends State<StoryInfo> {
                             );
                           },
                         )).then((newChapterNumber) => setState(() {
+                              print("receive $newChapterNumber");
                               this.currentChapterNumber = newChapterNumber;
                               this.usedToRead = true;
                             }));
@@ -251,16 +252,26 @@ class _StoryInfoState extends State<StoryInfo> {
                     ? null
                     : () {
                         pushNewScreen(context,
-                            screen: MenuChapters(
-                              storyTitle: storyTitle,
-                              storyID: widget.storyID,
-                              chaptersCount: storyChapters,
-                              isFavorite: this.isFavorite,
-                              fromReading: false,
-                            ),
-                            withNavBar: false,
-                            pageTransitionAnimation:
-                                PageTransitionAnimation.cupertino);
+                                screen: MenuChapters(
+                                  storyTitle: storyTitle,
+                                  storyID: widget.storyID,
+                                  currentChapter: currentChapterNumber,
+                                  chaptersCount: storyChapters,
+                                  isFavorite: this.isFavorite,
+                                  fromReading: false,
+                                ),
+                                withNavBar: false,
+                                pageTransitionAnimation:
+                                    PageTransitionAnimation.cupertino)
+                            .then((chosenChapter) {
+                          print("result from menuchapter $chosenChapter");
+                          if (chosenChapter != null) {
+                            setState(() {
+                              this.usedToRead = true;
+                              this.currentChapterNumber = chosenChapter;
+                            });
+                          }
+                        });
                       },
                 child: Column(
                   children: <Widget>[

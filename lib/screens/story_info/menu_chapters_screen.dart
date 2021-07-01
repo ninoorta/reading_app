@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:reading_app/screens/story_info/reading_screen.dart';
@@ -10,6 +11,7 @@ class MenuChapters extends StatefulWidget {
       {Key? key,
       required this.storyTitle,
       required this.storyID,
+      required this.currentChapter,
       required this.chaptersCount,
       required this.isFavorite,
       required this.fromReading})
@@ -17,6 +19,7 @@ class MenuChapters extends StatefulWidget {
 
   final String storyTitle;
   final String storyID;
+  final int currentChapter;
   final int chaptersCount;
   final bool isFavorite;
   final bool fromReading;
@@ -27,6 +30,7 @@ class MenuChapters extends StatefulWidget {
 
 class _MenuChaptersState extends State<MenuChapters> {
   bool isLoading = true;
+  bool haveReadAChapter = false;
 
   List chaptersData = [];
 
@@ -35,6 +39,8 @@ class _MenuChaptersState extends State<MenuChapters> {
 
   int endOffset = 50;
   int startOffset = 1;
+
+  int chosenChapter = 1;
 
   @override
   void initState() {
@@ -73,15 +79,21 @@ class _MenuChaptersState extends State<MenuChapters> {
     print("arguments $arguments");
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           widget.storyTitle,
           style: TextStyle(color: Colors.black, fontSize: 20),
         ),
         leading: BackButton(
-          color: Colors.blue,
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+            color: Colors.blue,
+            onPressed: () {
+              if (haveReadAChapter) {
+                Navigator.pop(context, this.chosenChapter);
+              } else {
+                Navigator.pop(context);
+              }
+            }),
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
@@ -146,16 +158,84 @@ class _MenuChaptersState extends State<MenuChapters> {
                   color:
                       currentChapterList == 1 ? Colors.grey[400] : Colors.blue,
                 )),
-            Container(
-              color: Colors.white,
-              child: Center(
-                  child: Text(
-                "$currentChapterList / $endChapterList",
-                style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500),
-              )),
+            GestureDetector(
+              onTap: () {
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (context) {
+                    int inputPage = 1;
+                    return CupertinoAlertDialog(
+                      title: Text(
+                        "Đi đến trang",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      content: Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: CupertinoTextField(
+                          keyboardType: TextInputType.number,
+                          placeholder: "Nhập số trang",
+                          autofocus: true,
+                          padding: EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(7.5)),
+                          onChanged: (userInput) {
+                            setState(() {
+                              inputPage = int.parse(userInput);
+                              inputPage = inputPage < 1 ? 1 : inputPage;
+                            });
+                          },
+                        ),
+                      ),
+                      actions: [
+                        CupertinoDialogAction(
+                          child: Text(
+                            "Hủy",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                                fontSize: 16),
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        CupertinoDialogAction(
+                          child: Text(
+                            "OK",
+                            style: TextStyle(color: Colors.blue, fontSize: 16),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              if (inputPage > this.endChapterList) {
+                                this.currentChapterList = this.endChapterList;
+                                this.startOffset =
+                                    ((this.endChapterList - 1) * 50) + 1;
+                                this.endOffset = this.endChapterList * 50;
+                              } else {
+                                this.startOffset = ((inputPage - 1) * 50) + 1;
+                                this.endOffset = inputPage * 50;
+                                this.currentChapterList = inputPage;
+                              }
+                              getData();
+                              Navigator.pop(context);
+                            });
+                          },
+                        )
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Container(
+                color: Colors.white,
+                child: Center(
+                    child: Text(
+                  "$currentChapterList / $endChapterList",
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500),
+                )),
+              ),
             ),
             IconButton(
                 onPressed: currentChapterList == endChapterList
@@ -245,7 +325,7 @@ class _MenuChaptersState extends State<MenuChapters> {
                               if (widget.fromReading) {
                                 Navigator.pop(context, currentItem["number"]);
                               } else {
-                                Navigator.pop(context);
+                                // Navigator.pop(context);
                                 print(
                                     "chosen chapter ${currentItem["number"]}");
                                 pushNewScreen(
@@ -260,7 +340,14 @@ class _MenuChaptersState extends State<MenuChapters> {
                                   withNavBar: false,
                                   pageTransitionAnimation:
                                       PageTransitionAnimation.cupertino,
-                                );
+                                ).then((chosenChapterNumber) {
+                                  setState(() {
+                                    print(
+                                        "chapter user read $chosenChapterNumber");
+                                    this.haveReadAChapter = true;
+                                    this.chosenChapter = chosenChapterNumber;
+                                  });
+                                });
                               }
                             },
                             child: Container(
