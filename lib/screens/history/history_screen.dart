@@ -57,53 +57,60 @@ class _HistoryScreenState extends State<HistoryScreen> {
               getLocalData();
             });
           },
-          child: Scrollbar(
-            child: SingleChildScrollView(
-              child: SizedBox(
-                child: Container(
-                  height: MediaQuery.of(context).size.height -
-                      AppBar().preferredSize.height,
-                  padding: EdgeInsets.symmetric(horizontal: 15.0),
-                  margin: EdgeInsets.only(bottom: 10.0),
-                  color: Colors.white,
-                  child: isLoading
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            Center(
-                              child: Container(
-                                child: Text(
-                                  "Đang tải...",
-                                  style: kListTitleTextStyle,
+          child: NotificationListener<OverscrollIndicatorNotification>(
+            onNotification: (overScroll) {
+              overScroll.disallowGlow();
+              return true;
+            },
+            child: Scrollbar(
+              child: SingleChildScrollView(
+                child: SizedBox(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height -
+                        AppBar().preferredSize.height,
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
+                    margin: EdgeInsets.only(bottom: 10.0),
+                    color: Colors.white,
+                    child: isLoading
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              Center(
+                                child: Container(
+                                  child: Text(
+                                    "Đang tải...",
+                                    style: kListTitleTextStyle,
+                                  ),
                                 ),
+                              )
+                            ],
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              BuildHistoryList(
+                                title: "Đọc Gần Đây",
+                                data: recentReadData.isEmpty
+                                    ? null
+                                    : recentReadData,
+                                refreshFunc: getLocalData,
                               ),
-                            )
-                          ],
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            BuildHistoryList(
-                              title: "Đọc Gần Đây",
-                              data: recentReadData.isEmpty
-                                  ? null
-                                  : recentReadData,
-                              refreshFunc: getLocalData,
-                            ),
-                            BuildHistoryList(
-                              title: "Yêu Thích Gần Đây",
-                              data: favoriteData.isEmpty ? null : favoriteData,
-                              refreshFunc: getLocalData,
-                            ),
-                            // later
-                            // BuildHistoryList(
-                            //   title: "Tải Gần Đây",
-                            //   refreshFunc: getLocalData,
-                            // ),
-                          ],
-                        ),
+                              BuildHistoryList(
+                                title: "Yêu Thích Gần Đây",
+                                data:
+                                    favoriteData.isEmpty ? null : favoriteData,
+                                refreshFunc: getLocalData,
+                              ),
+                              // later
+                              // BuildHistoryList(
+                              //   title: "Tải Gần Đây",
+                              //   refreshFunc: getLocalData,
+                              // ),
+                            ],
+                          ),
+                  ),
                 ),
               ),
             ),

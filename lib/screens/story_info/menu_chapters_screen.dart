@@ -304,96 +304,103 @@ class _MenuChaptersState extends State<MenuChapters> {
                 )
               ],
             )
-          : Scrollbar(
-              child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15.0),
-                  margin: EdgeInsets.only(bottom: 20.0),
-                  // height: 500,
-                  color: Colors.white,
-                  child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemCount:
-                        chaptersData.length >= 50 ? 50 : chaptersData.length,
-                    itemBuilder: (context, index) {
-                      var currentItem = chaptersData[index];
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              if (widget.fromReading) {
-                                Navigator.pop(context, currentItem["number"]);
-                              } else {
-                                // Navigator.pop(context);
-                                print(
-                                    "chosen chapter ${currentItem["number"]}");
-                                pushNewScreen(
-                                  context,
-                                  screen: ReadingScreen(
-                                    storyTitle: widget.storyTitle,
-                                    storyID: widget.storyID,
-                                    chaptersCount: widget.chaptersCount,
-                                    currentChapterNumber: currentItem["number"],
-                                    isFavorite: widget.isFavorite,
-                                  ),
-                                  withNavBar: false,
-                                  pageTransitionAnimation:
-                                      PageTransitionAnimation.cupertino,
-                                ).then((chosenChapterNumber) {
-                                  setState(() {
-                                    print(
-                                        "chapter user read $chosenChapterNumber");
-                                    this.haveReadAChapter = true;
-                                    this.chosenChapter = chosenChapterNumber;
+          : NotificationListener<OverscrollIndicatorNotification>(
+              onNotification: (overScroll) {
+                overScroll.disallowGlow();
+                return true;
+              },
+              child: Scrollbar(
+                child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
+                    margin: EdgeInsets.only(bottom: 20.0),
+                    // height: 500,
+                    color: Colors.white,
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount:
+                          chaptersData.length >= 50 ? 50 : chaptersData.length,
+                      itemBuilder: (context, index) {
+                        var currentItem = chaptersData[index];
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                if (widget.fromReading) {
+                                  Navigator.pop(context, currentItem["number"]);
+                                } else {
+                                  // Navigator.pop(context);
+                                  print(
+                                      "chosen chapter ${currentItem["number"]}");
+                                  pushNewScreen(
+                                    context,
+                                    screen: ReadingScreen(
+                                      storyTitle: widget.storyTitle,
+                                      storyID: widget.storyID,
+                                      chaptersCount: widget.chaptersCount,
+                                      currentChapterNumber:
+                                          currentItem["number"],
+                                      isFavorite: widget.isFavorite,
+                                    ),
+                                    withNavBar: false,
+                                    pageTransitionAnimation:
+                                        PageTransitionAnimation.cupertino,
+                                  ).then((chosenChapterNumber) {
+                                    setState(() {
+                                      print(
+                                          "chapter user read $chosenChapterNumber");
+                                      this.haveReadAChapter = true;
+                                      this.chosenChapter = chosenChapterNumber;
+                                    });
                                   });
-                                });
-                              }
-                            },
-                            child: Container(
-                              margin: EdgeInsets.symmetric(vertical: 2.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 5,
-                                    child: Text(
-                                      currentItem["title"],
-                                      style: TextStyle(
-                                          color: Colors.grey[850],
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.normal),
+                                }
+                              },
+                              child: Container(
+                                margin: EdgeInsets.symmetric(vertical: 2.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 5,
+                                      child: Text(
+                                        currentItem["title"],
+                                        style: TextStyle(
+                                            color: Colors.grey[850],
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.normal),
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 10.0,
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      currentItem.containsKey("updated")
-                                          ? Time()
-                                              .getDate(currentItem["updated"])
-                                          : "",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.grey[500]),
+                                    SizedBox(
+                                      width: 10.0,
                                     ),
-                                  ),
-                                ],
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        currentItem.containsKey("updated")
+                                            ? Time()
+                                                .getDate(currentItem["updated"])
+                                            : "",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.grey[500]),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          new Divider(
-                            color: Colors.black54,
-                            thickness: 0.75,
-                          )
-                        ],
-                      );
-                    },
-                  )),
+                            new Divider(
+                              color: Colors.black54,
+                              thickness: 0.75,
+                            )
+                          ],
+                        );
+                      },
+                    )),
+              ),
             ),
     );
   }

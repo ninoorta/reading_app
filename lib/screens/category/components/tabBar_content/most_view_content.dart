@@ -81,52 +81,58 @@ class _MostViewContentState extends State<MostViewContent> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoScrollbar(
-      child: SingleChildScrollView(
-        controller: _scrollController,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              child: ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: isLoading ? 10 : tabData.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return isLoading
-                      ? MyCustomTileSkeleton()
-                      : MyCustomTile(
-                          currentItemData: tabData[index],
-                        );
-                },
+    return NotificationListener<OverscrollIndicatorNotification>(
+      onNotification: (overScroll) {
+        overScroll.disallowGlow();
+        return true;
+      },
+      child: CupertinoScrollbar(
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                child: ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: isLoading ? 10 : tabData.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return isLoading
+                        ? MyCustomTileSkeleton()
+                        : MyCustomTile(
+                            currentItemData: tabData[index],
+                          );
+                  },
+                ),
               ),
-            ),
-            isLoadingMore
-                ? Container(
-                    margin: EdgeInsets.only(bottom: 5),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CupertinoActivityIndicator(
-                          radius: 15,
-                        ),
-                        SizedBox(
-                          height: 7.5,
-                        ),
-                        Text(
-                          "Đang tải...",
-                          style: TextStyle(color: Colors.black, fontSize: 18),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        )
-                      ],
-                    ),
-                  )
-                : Container()
-          ],
+              isLoadingMore
+                  ? Container(
+                      margin: EdgeInsets.only(bottom: 5),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CupertinoActivityIndicator(
+                            radius: 15,
+                          ),
+                          SizedBox(
+                            height: 7.5,
+                          ),
+                          Text(
+                            "Đang tải...",
+                            style: TextStyle(color: Colors.black, fontSize: 18),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          )
+                        ],
+                      ),
+                    )
+                  : Container()
+            ],
+          ),
         ),
       ),
     );

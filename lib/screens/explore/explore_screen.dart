@@ -38,15 +38,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    // storyDatabase = StoryDatabase();
-
-    // Future.delayed(Duration(seconds: 5), () {
-    //   setState(() {
-    //     this.isLoading = false;
-    //   });
-    // });
-
     getData();
   }
 
@@ -60,6 +51,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
     setState(() {
       this.isLoading = false;
     });
+  }
+
+  Widget buildOtherGroup() {
+    return Text("");
   }
 
   @override
@@ -82,174 +77,287 @@ class _ExploreScreenState extends State<ExploreScreen> {
             getData();
           });
         },
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Container(
-            color: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
-            margin: EdgeInsets.only(bottom: 15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                CustomListView(
-                  listName: "Mới Đăng",
-                  isLoading: isLoading,
-                  listData: newStories,
-                  isNewPublish: true,
-                ),
-                CustomListView(
-                  listName: "Mới Cập Nhật",
-                  isLoading: isLoading,
-                  listData: recentUpdatedStories,
-                  isNewPublish: false,
-                ),
-                // later
-                // CustomListView(
-                //     listName: "Truyện đọc gần đây", isLoading: isLoading),
-                // later
-                Column(
+        child: NotificationListener<OverscrollIndicatorNotification>(
+          onNotification: (overScroll) {
+            overScroll.disallowGlow();
+            return true;
+          },
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              physics: ClampingScrollPhysics(),
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 15.0),
+                margin: EdgeInsets.only(bottom: 15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
+                    CustomListView(
+                      listName: "Mới Đăng",
+                      isLoading: isLoading,
+                      listData: newStories,
+                      isNewPublish: true,
+                    ),
+                    CustomListView(
+                      listName: "Mới Cập Nhật",
+                      isLoading: isLoading,
+                      listData: recentUpdatedStories,
+                      isNewPublish: false,
+                    ),
+                    // later
+                    // CustomListView(
+                    //     listName: "Truyện đọc gần đây", isLoading: isLoading),
+                    // later
+                    Column(
                       children: [
-                        Text("Thể loại", style: kListTitleTextStyle),
-                        TextButton(
-                            onPressed: () {
-                              pushNewScreen(context,
-                                  screen: CategoryScreen(
-                                    fromOtherRoute: true,
-                                  ),
-                                  withNavBar: true,
-                                  pageTransitionAnimation:
-                                      PageTransitionAnimation.cupertino);
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text("Thể loại", style: kListTitleTextStyle),
+                            TextButton(
+                                onPressed: () {
+                                  pushNewScreen(context,
+                                      screen: CategoryScreen(
+                                        fromOtherRoute: true,
+                                      ),
+                                      withNavBar: true,
+                                      pageTransitionAnimation:
+                                          PageTransitionAnimation.cupertino);
+                                },
+                                child: Text(
+                                  "Xem thêm",
+                                  style: TextStyle(
+                                      color: Colors.blue, fontSize: 14),
+                                ))
+                          ],
+                        ),
+                        SizedBox(
+                          height: 200,
+                          child: GridView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    mainAxisExtent: 50,
+                                    crossAxisSpacing: 15.0,
+                                    mainAxisSpacing: 15.0),
+                            itemCount: typeList.length,
+                            itemBuilder: (context, index) {
+                              var currentType = typeList[index];
+                              return isLoading
+                                  ? BuildSkeletonTypeItem()
+                                  : BuildTypeItem(
+                                      type: currentType,
+                                    );
                             },
-                            child: Text(
-                              "Xem thêm",
-                              style:
-                                  TextStyle(color: Colors.blue, fontSize: 14),
-                            ))
+                          ),
+                        ),
                       ],
                     ),
-                    SizedBox(
-                      height: 200,
-                      child: GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisExtent: 50,
-                            crossAxisSpacing: 15.0,
-                            mainAxisSpacing: 15.0),
-                        itemCount: typeList.length,
-                        itemBuilder: (context, index) {
-                          var currentType = typeList[index];
-                          return isLoading
-                              ? BuildSkeletonTypeItem()
-                              : BuildTypeItem(
-                                  type: currentType,
-                                );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "Danh sách khác",
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500),
-                    ),
-                    SizedBox(
-                      height: 5.0,
-                    ),
-                    ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: otherList.length,
-                      itemBuilder: (context, index) {
-                        var currentItem = otherList[index];
-                        var currentItemID = currentItem["_id"]["\$oid"];
-                        var currentItemTitle = currentItem["title"];
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          // crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            GestureDetector(
-                              child: Container(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      flex: 4,
-                                      child: RichText(
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          text: TextSpan(children: [
-                                            new TextSpan(
-                                                text: currentItem["title"],
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 15))
-                                          ])),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: IconButton(
-                                        onPressed: () {
-                                          print("move to $currentItemID");
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          "Danh sách khác",
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: otherList.length,
+                          itemBuilder: (context, index) {
+                            var currentItem = otherList[index];
+                            var currentItemID = currentItem["_id"]["\$oid"];
+                            var currentItemTitle = currentItem["title"];
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              // crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                GestureDetector(
+                                  child: Container(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          flex: 4,
+                                          child: RichText(
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              text: TextSpan(children: [
+                                                new TextSpan(
+                                                    text: currentItem["title"],
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 15))
+                                              ])),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: IconButton(
+                                            onPressed: () {
+                                              print("move to $currentItemID");
 
-                                          pushNewScreen(context,
-                                              screen: OtherGroupScreen(
-                                                  groupID: currentItemID,
-                                                  groupTitle: currentItemTitle),
-                                              withNavBar: true,
-                                              pageTransitionAnimation:
-                                                  PageTransitionAnimation
-                                                      .cupertino);
-                                        },
-                                        icon: Icon(Icons.arrow_forward_ios),
-                                        padding: EdgeInsets.zero,
-                                        color: Colors.grey[500],
-                                        iconSize: 20,
-                                      ),
-                                    )
-                                  ],
+                                              pushNewScreen(context,
+                                                  screen: OtherGroupScreen(
+                                                      groupID: currentItemID,
+                                                      groupTitle:
+                                                          currentItemTitle),
+                                                  withNavBar: true,
+                                                  pageTransitionAnimation:
+                                                      PageTransitionAnimation
+                                                          .cupertino);
+                                            },
+                                            icon: Icon(Icons.arrow_forward_ios),
+                                            padding: EdgeInsets.zero,
+                                            color: Colors.grey[500],
+                                            iconSize: 20,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    print("move to $currentItemID");
+                                    pushNewScreen(context,
+                                        screen: OtherGroupScreen(
+                                            groupID: currentItemID,
+                                            groupTitle: currentItemTitle),
+                                        withNavBar: true,
+                                        pageTransitionAnimation:
+                                            PageTransitionAnimation.cupertino);
+                                  },
                                 ),
-                              ),
-                              onTap: () {
-                                print("move to $currentItemID");
-                                pushNewScreen(context,
-                                    screen: OtherGroupScreen(
-                                        groupID: currentItemID,
-                                        groupTitle: currentItemTitle),
-                                    withNavBar: true,
-                                    pageTransitionAnimation:
-                                        PageTransitionAnimation.cupertino);
-                              },
-                            ),
-                            index != otherList.length - 1
-                                ? Divider(
-                                    color: Colors.grey[500],
-                                    thickness: 0.75,
-                                    height: 2,
-                                  )
-                                : SizedBox(
-                                    height: 15.0,
-                                  )
-                          ],
-                        );
-                      },
+                                index != otherList.length - 1
+                                    ? Divider(
+                                        color: Colors.grey[500],
+                                        thickness: 0.75,
+                                        height: 2,
+                                      )
+                                    : SizedBox(
+                                        height: 15.0,
+                                      )
+                              ],
+                            );
+                          },
+                        ),
+                        // SizedBox(
+                        //   height: 5.0,
+                        // ),
+                        // SizedBox(
+                        //   height: 300,
+                        //   child: GridView.builder(
+                        //     shrinkWrap: true,
+                        //     physics: NeverScrollableScrollPhysics(),
+                        //     gridDelegate:
+                        //         SliverGridDelegateWithFixedCrossAxisCount(
+                        //             crossAxisCount: 1,
+                        //             mainAxisExtent: 65,
+                        //             crossAxisSpacing: 0.0,
+                        //             mainAxisSpacing: 0.0),
+                        //     itemCount: otherList.length,
+                        //     itemBuilder: (context, index) {
+                        //       var currentItem = otherList[index];
+                        //       var currentItemID = currentItem["_id"]["\$oid"];
+                        //       var currentItemTitle = currentItem["title"];
+                        //       return Column(
+                        //         mainAxisAlignment: MainAxisAlignment.start,
+                        //         // crossAxisAlignment: CrossAxisAlignment.stretch,
+                        //         children: [
+                        //           GestureDetector(
+                        //             child: Container(
+                        //               child: Row(
+                        //                 mainAxisAlignment:
+                        //                     MainAxisAlignment.spaceBetween,
+                        //                 crossAxisAlignment:
+                        //                     CrossAxisAlignment.center,
+                        //                 children: [
+                        //                   Expanded(
+                        //                     flex: 4,
+                        //                     child: RichText(
+                        //                         maxLines: 2,
+                        //                         overflow: TextOverflow.ellipsis,
+                        //                         text: TextSpan(children: [
+                        //                           new TextSpan(
+                        //                               text:
+                        //                                   currentItem["title"],
+                        //                               style: TextStyle(
+                        //                                   color: Colors.black,
+                        //                                   fontSize: 15))
+                        //                         ])),
+                        //                   ),
+                        //                   Expanded(
+                        //                     flex: 1,
+                        //                     child: IconButton(
+                        //                       onPressed: () {
+                        //                         print("move to $currentItemID");
+                        //
+                        //                         pushNewScreen(context,
+                        //                             screen: OtherGroupScreen(
+                        //                                 groupID: currentItemID,
+                        //                                 groupTitle:
+                        //                                     currentItemTitle),
+                        //                             withNavBar: true,
+                        //                             pageTransitionAnimation:
+                        //                                 PageTransitionAnimation
+                        //                                     .cupertino);
+                        //                       },
+                        //                       icon:
+                        //                           Icon(Icons.arrow_forward_ios),
+                        //                       padding: EdgeInsets.zero,
+                        //                       color: Colors.grey[500],
+                        //                       iconSize: 20,
+                        //                     ),
+                        //                   )
+                        //                 ],
+                        //               ),
+                        //             ),
+                        //             onTap: () {
+                        //               print("move to $currentItemID");
+                        //               pushNewScreen(context,
+                        //                   screen: OtherGroupScreen(
+                        //                       groupID: currentItemID,
+                        //                       groupTitle: currentItemTitle),
+                        //                   withNavBar: true,
+                        //                   pageTransitionAnimation:
+                        //                       PageTransitionAnimation
+                        //                           .cupertino);
+                        //             },
+                        //           ),
+                        //           index != otherList.length - 1
+                        //               ? Divider(
+                        //                   color: Colors.grey[500],
+                        //                   thickness: 0.75,
+                        //                   height: 2,
+                        //                 )
+                        //               : SizedBox(
+                        //                   height: 0.0,
+                        //                 )
+                        //         ],
+                        //       );
+                        //     },
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   height: 15.0,
+                        // )
+                      ],
                     )
                   ],
-                )
-              ],
+                ),
+              ),
             ),
           ),
         ),

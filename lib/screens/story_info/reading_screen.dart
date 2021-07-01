@@ -256,48 +256,54 @@ class _ReadingScreenState extends State<ReadingScreen> {
                     this.visible = !this.visible;
                   });
                 },
-                child: Scrollbar(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: Container(
-                      color: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 15.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          SizedBox(
-                            height: visible ? 0 : 56,
-                          ),
-                          Container(
-                            margin: EdgeInsets.symmetric(vertical: 20.0),
-                            child: Text(
-                              chapterTitle,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
+                child: NotificationListener<OverscrollIndicatorNotification>(
+                  onNotification: (overScroll) {
+                    overScroll.disallowGlow();
+                    return true;
+                  },
+                  child: Scrollbar(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Container(
+                        color: Colors.white,
+                        padding: EdgeInsets.symmetric(horizontal: 15.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            SizedBox(
+                              height: visible ? 0 : 56,
                             ),
-                          ),
-                          Html(data: chapterContent, style: {
-                            "body": Style(
-                                color: Colors.black,
-                                fontSize: FontSize.rem(1.15))
-                          }),
-                          Container(
-                            margin: EdgeInsets.only(bottom: 50, top: 20),
-                            child: Center(
+                            Container(
+                              margin: EdgeInsets.symmetric(vertical: 20.0),
                               child: Text(
-                                "--- $currentChapterNumber "
-                                "/ ${widget.chaptersCount} ---",
+                                chapterTitle,
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
                               ),
                             ),
-                          )
-                        ],
+                            Html(data: chapterContent, style: {
+                              "body": Style(
+                                  color: Colors.black,
+                                  fontSize: FontSize.rem(1.15))
+                            }),
+                            Container(
+                              margin: EdgeInsets.only(bottom: 50, top: 20),
+                              child: Center(
+                                child: Text(
+                                  "--- $currentChapterNumber "
+                                  "/ ${widget.chaptersCount} ---",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),

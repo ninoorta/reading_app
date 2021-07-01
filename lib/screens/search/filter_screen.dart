@@ -237,103 +237,109 @@ class _FilterScreenState extends State<FilterScreen> {
           ),
         ),
       ),
-      body: Scrollbar(
-        thickness: 5,
-        interactive: true,
-        child: SingleChildScrollView(
-          child: Container(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              // padding: EdgeInsets.zero,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(bottom: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Trạng thái".toUpperCase(),
-                          style: kMediumBlackTitleTextStyle,
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        SingleChoiceChip(statusConditionList,
-                            onSelectChange: (selectedChoice) {
-                          setState(() {
-                            selectedStatusCondition = selectedChoice;
-                          });
-                        }),
-                      ],
+      body: NotificationListener<OverscrollIndicatorNotification>(
+        onNotification: (overScroll) {
+          overScroll.disallowGlow();
+          return true;
+        },
+        child: Scrollbar(
+          thickness: 5,
+          interactive: true,
+          child: SingleChildScrollView(
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                // padding: EdgeInsets.zero,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Trạng thái".toUpperCase(),
+                            style: kMediumBlackTitleTextStyle,
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          SingleChoiceChip(statusConditionList,
+                              onSelectChange: (selectedChoice) {
+                            setState(() {
+                              selectedStatusCondition = selectedChoice;
+                            });
+                          }),
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Số chương".toUpperCase(),
-                          style: kMediumBlackTitleTextStyle,
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        SingleChoiceChip(chapterConditionList,
-                            onSelectChange: (selectedChoice) {
-                          setState(() {
-                            selectedChapterCondition = selectedChoice;
-                          });
-                        }),
-                      ],
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Số chương".toUpperCase(),
+                            style: kMediumBlackTitleTextStyle,
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          SingleChoiceChip(chapterConditionList,
+                              onSelectChange: (selectedChoice) {
+                            setState(() {
+                              selectedChapterCondition = selectedChoice;
+                            });
+                          }),
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Sắp xếp".toUpperCase(),
-                          style: kMediumBlackTitleTextStyle,
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        SingleChoiceChip(sortConditionList,
-                            onSelectChange: (selectedChoice) {
-                          setState(() {
-                            selectedSortCondition = selectedChoice;
-                          });
-                        }),
-                      ],
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Sắp xếp".toUpperCase(),
+                            style: kMediumBlackTitleTextStyle,
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          SingleChoiceChip(sortConditionList,
+                              onSelectChange: (selectedChoice) {
+                            setState(() {
+                              selectedSortCondition = selectedChoice;
+                            });
+                          }),
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 30),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Thể loại".toUpperCase(),
-                          style: kMediumBlackTitleTextStyle,
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        MultipleChoiceChip(categoryList,
-                            onSelectChange: (selectedList) {
-                          setState(() {
-                            selectedTypeList = selectedList;
-                          });
-                        }),
-                      ],
+                    Container(
+                      margin: EdgeInsets.only(bottom: 30),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Thể loại".toUpperCase(),
+                            style: kMediumBlackTitleTextStyle,
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          MultipleChoiceChip(categoryList,
+                              onSelectChange: (selectedList) {
+                            setState(() {
+                              selectedTypeList = selectedList;
+                            });
+                          }),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

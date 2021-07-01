@@ -119,20 +119,26 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 )
               : null,
         ),
-        body: Scrollbar(
-          child: Container(
-            color: Colors.white,
-            padding: EdgeInsets.symmetric(vertical: 10),
-            margin: EdgeInsets.only(bottom: 15.0),
-            child: GridView.count(
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 5,
-              crossAxisCount: 2,
-              childAspectRatio: 3.7,
-              children: renderCategoryWidget(),
+        body: NotificationListener<OverscrollIndicatorNotification>(
+          onNotification: (overScroll) {
+            overScroll.disallowGlow();
+            return true;
+          },
+          child: Scrollbar(
+            child: Container(
+              color: Colors.white,
+              padding: EdgeInsets.symmetric(vertical: 10),
+              margin: EdgeInsets.only(bottom: 15.0),
+              child: GridView.count(
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 5,
+                crossAxisCount: 2,
+                childAspectRatio: 3.7,
+                children: renderCategoryWidget(),
+              ),
             ),
           ),
         ));

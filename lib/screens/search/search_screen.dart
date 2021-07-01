@@ -105,164 +105,176 @@ class _SearchScreenState extends State<SearchScreen> {
         ],
       ),
       resizeToAvoidBottomInset: false,
-      body: Scrollbar(
-          interactive: true,
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            padding: EdgeInsets.fromLTRB(15, 10, 15, 30),
-            color: Colors.white,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: CupertinoSearchTextField(
-                      controller: _textEditingController,
-                      placeholder: "Nhập tên truyện hoặc tác giả",
-                      prefixInsets: EdgeInsetsDirectional.fromSTEB(6, 5, 0, 4),
-                      padding: EdgeInsetsDirectional.fromSTEB(7.5, 8, 5, 8),
-                      onSuffixTap: () {
-                        setState(() {
-                          print("click cancel icon");
-                          this.haveData = false;
-                          _textEditingController.clear();
-                        });
-                      },
-                      onSubmitted: (userInput) {
-                        print("userInput entered $userInput");
-                        setState(() {
-                          this.userInput = userInput;
-                          getSearchData();
-                        });
-                      },
+      body: NotificationListener<OverscrollIndicatorNotification>(
+        onNotification: (overScroll) {
+          overScroll.disallowGlow();
+          return true;
+        },
+        child: Scrollbar(
+            interactive: true,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              padding: EdgeInsets.fromLTRB(15, 10, 15, 30),
+              color: Colors.white,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: CupertinoSearchTextField(
+                        controller: _textEditingController,
+                        placeholder: "Nhập tên truyện hoặc tác giả",
+                        prefixInsets:
+                            EdgeInsetsDirectional.fromSTEB(6, 5, 0, 4),
+                        padding: EdgeInsetsDirectional.fromSTEB(7.5, 8, 5, 8),
+                        onSuffixTap: () {
+                          setState(() {
+                            print("click cancel icon");
+                            this.haveData = false;
+                            _textEditingController.clear();
+                          });
+                        },
+                        onSubmitted: (userInput) {
+                          print("userInput entered $userInput");
+                          setState(() {
+                            this.userInput = userInput;
+                            getSearchData();
+                          });
+                        },
+                      ),
                     ),
-                  ),
-                  this.isLoading
-                      ? Container(
-                          color: Colors.white,
-                          height: MediaQuery.of(context).size.height * 0.6,
-                          child: Center(
-                            child: Text(
-                              "Đang tải...",
-                              style: TextStyle(fontSize: 18),
+                    this.isLoading
+                        ? Container(
+                            color: Colors.white,
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            child: Center(
+                              child: Text(
+                                "Đang tải...",
+                                style: TextStyle(fontSize: 18),
+                              ),
                             ),
-                          ),
-                        )
-                      : haveData
-                          ? Scrollbar(
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.vertical,
-                                child: Container(
-                                  color: Colors.white,
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 15.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: <Widget>[
-                                      ListView.builder(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemCount: searchResultList.length,
-                                        itemBuilder: (context, index) {
-                                          var currentItem =
-                                              searchResultList[index];
-                                          return CustomTile(
-                                              currentItem: currentItem);
-                                        },
-                                      )
-                                    ],
+                          )
+                        : haveData
+                            ? Scrollbar(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
+                                  child: Container(
+                                    color: Colors.white,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 15.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: <Widget>[
+                                        ListView.builder(
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemCount: searchResultList.length,
+                                          itemBuilder: (context, index) {
+                                            var currentItem =
+                                                searchResultList[index];
+                                            return CustomTile(
+                                                currentItem: currentItem);
+                                          },
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            )
-                          :
-                          // guide text
-                          Container(
-                              color: Colors.white,
-                              height: MediaQuery.of(context).size.height * 0.6,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Container(
-                                    child: Text(
-                                      'Để tìm kiếm chính xác hơn, bạn cần thêm dấu nháy " " vào cụm từ tìm kiếm của mình.',
-                                      style: TextStyle(fontSize: 16),
+                              )
+                            :
+                            // guide text
+                            Container(
+                                color: Colors.white,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.6,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Container(
+                                      child: Text(
+                                        'Để tìm kiếm chính xác hơn, bạn cần thêm dấu nháy " " vào cụm từ tìm kiếm của mình.',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 75),
                                     ),
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 75),
-                                  ),
-                                  Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 75),
-                                    margin: EdgeInsets.symmetric(vertical: 20),
-                                    child: Center(
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            primary: Colors.white,
-                                            elevation: 0),
-                                        onPressed: () {
-                                          print(
-                                              "click to move to filter screen");
-                                          //
-                                          // pushNewScreen(
-                                          //   context,
-                                          //   screen: FilterScreen(),
-                                          //   withNavBar: false,
-                                          //   // OPTIONAL VALUE. True by default.
-                                          //   pageTransitionAnimation:
-                                          //       PageTransitionAnimation.cupertino,
-                                          // );
+                                    Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 75),
+                                      margin:
+                                          EdgeInsets.symmetric(vertical: 20),
+                                      child: Center(
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              primary: Colors.white,
+                                              elevation: 0),
+                                          onPressed: () {
+                                            print(
+                                                "click to move to filter screen");
+                                            //
+                                            // pushNewScreen(
+                                            //   context,
+                                            //   screen: FilterScreen(),
+                                            //   withNavBar: false,
+                                            //   // OPTIONAL VALUE. True by default.
+                                            //   pageTransitionAnimation:
+                                            //       PageTransitionAnimation.cupertino,
+                                            // );
 
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                            builder: (context) {
-                                              return FilterScreen();
-                                            },
-                                          ));
-                                        },
-                                        child: Text(
-                                          "Tìm Với Bộ Lọc Truyện",
-                                          style: TextStyle(
-                                              color: Colors.blue,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                              builder: (context) {
+                                                return FilterScreen();
+                                              },
+                                            ));
+                                          },
+                                          child: Text(
+                                            "Tìm Với Bộ Lọc Truyện",
+                                            style: TextStyle(
+                                                color: Colors.blue,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
+                    isLoadingMore
+                        ? Container(
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                CupertinoActivityIndicator(
+                                  radius: 20,
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  "Đang tải...",
+                                  style: kListTitleTextStyle,
+                                )
+                              ],
                             ),
-                  isLoadingMore
-                      ? Container(
-                          padding: EdgeInsets.symmetric(vertical: 5.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              CupertinoActivityIndicator(
-                                radius: 20,
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "Đang tải...",
-                                style: kListTitleTextStyle,
-                              )
-                            ],
-                          ),
-                        )
-                      : Container()
-                ],
+                          )
+                        : Container()
+                  ],
+                ),
               ),
-            ),
-          )),
+            )),
+      ),
     );
   }
 }

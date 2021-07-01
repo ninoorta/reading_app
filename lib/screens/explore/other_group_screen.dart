@@ -67,34 +67,40 @@ class _OtherGroupScreenState extends State<OtherGroupScreen> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: Scrollbar(
-        interactive: true,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Container(
-            color: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 15),
-            margin: EdgeInsets.only(bottom: 30),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Container(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: isLoading ? 10 : groupData.length,
-                    itemBuilder: (context, index) {
-                      return isLoading
-                          ? CustomTileSkeleton()
-                          : CustomTile(
-                              currentItem: groupData[index],
-                            );
-                    },
-                  ),
-                )
-              ],
+      body: NotificationListener<OverscrollIndicatorNotification>(
+        onNotification: (overScroll) {
+          overScroll.disallowGlow();
+          return true;
+        },
+        child: Scrollbar(
+          interactive: true,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Container(
+              color: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              margin: EdgeInsets.only(bottom: 30),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Container(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: isLoading ? 10 : groupData.length,
+                      itemBuilder: (context, index) {
+                        return isLoading
+                            ? CustomTileSkeleton()
+                            : CustomTile(
+                                currentItem: groupData[index],
+                              );
+                      },
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),

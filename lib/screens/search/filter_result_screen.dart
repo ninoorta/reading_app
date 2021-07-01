@@ -204,139 +204,145 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
           ),
         ),
       ),
-      body: Scrollbar(
-        thickness: 5,
-        interactive: true,
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
-            color: Colors.white,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                isLoading
-                    ? Container()
-                    : resultData.length == 0
-                        ? Container(
-                            height: MediaQuery.of(context).size.height * 0.85,
-                            child: Center(
-                              child: Text(
-                                "Không có truyện nào phù hợp yêu cầu.",
-                                style: kMediumDarkerTitleTextStyle,
+      body: NotificationListener<OverscrollIndicatorNotification>(
+        onNotification: (overScroll) {
+          overScroll.disallowGlow();
+          return true;
+        },
+        child: Scrollbar(
+          thickness: 5,
+          interactive: true,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 15.0),
+              color: Colors.white,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  isLoading
+                      ? Container()
+                      : resultData.length == 0
+                          ? Container(
+                              height: MediaQuery.of(context).size.height * 0.85,
+                              child: Center(
+                                child: Text(
+                                  "Không có truyện nào phù hợp yêu cầu.",
+                                  style: kMediumDarkerTitleTextStyle,
+                                ),
                               ),
-                            ),
-                          )
-                        : Container(),
-                ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  itemCount: isLoading ? 10 : resultData.length,
-                  itemBuilder: (context, index) {
-                    return isLoading
-                        ? CustomTileSkeleton()
-                        : CustomTile(currentItem: resultData[index]);
-                    // return Column(
-                    //   children: [
-                    //     Row(
-                    //       mainAxisAlignment: MainAxisAlignment.start,
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Expanded(
-                    //           flex: 4,
-                    //           child: Padding(
-                    //             padding: EdgeInsets.only(right: 10.0),
-                    //             child: Column(
-                    //               crossAxisAlignment: CrossAxisAlignment.start,
-                    //               children: [
-                    //                 Text(
-                    //                   "Tên truyện",
-                    //                   style: TextStyle(
-                    //                       color: Colors.blue, fontSize: 18),
-                    //                 ),
-                    //                 SizedBox(
-                    //                   height: 7.5,
-                    //                 ),
-                    //                 RichText(
-                    //                     overflow: TextOverflow.ellipsis,
-                    //                     text: TextSpan(children: [
-                    //                       new TextSpan(
-                    //                           text: "1 giờ trước  ",
-                    //                           style:
-                    //                               kMediumBlackTitleTextStyle),
-                    //                       new TextSpan(
-                    //                           text: "Tên tác giả",
-                    //                           style: kMediumBlackTitleTextStyle)
-                    //                     ])),
-                    //                 SizedBox(
-                    //                   height: 5.0,
-                    //                 ),
-                    //                 Text(
-                    //                   "40 chương",
-                    //                   style: kMediumBlackTitleTextStyle,
-                    //                 ),
-                    //                 SizedBox(
-                    //                   height: 5.0,
-                    //                 ),
-                    //                 RichText(
-                    //                     overflow: TextOverflow.ellipsis,
-                    //                     text: TextSpan(children: [
-                    //                       new TextSpan(
-                    //                           text: "Thể loại 1 ",
-                    //                           style:
-                    //                               kMediumBlackTitleTextStyle),
-                    //                       new TextSpan(
-                    //                           text: "Thể loại 2 ",
-                    //                           style:
-                    //                               kMediumBlackTitleTextStyle),
-                    //                       new TextSpan(
-                    //                           text: "Thể loại 3 ",
-                    //                           style:
-                    //                               kMediumBlackTitleTextStyle),
-                    //                       new TextSpan(
-                    //                           text: "Thể loại 4 ",
-                    //                           style:
-                    //                               kMediumBlackTitleTextStyle),
-                    //                       new TextSpan(
-                    //                           text: "Thể loại 4 ",
-                    //                           style:
-                    //                               kMediumBlackTitleTextStyle),
-                    //                     ]))
-                    //               ],
-                    //             ),
-                    //           ),
-                    //         ),
-                    //         Expanded(
-                    //             flex: 1,
-                    //             child: Container(
-                    //               width: 50,
-                    //               height: 100,
-                    //               decoration: BoxDecoration(
-                    //                   color: Colors.grey[300],
-                    //                   borderRadius: BorderRadius.circular(5.0)),
-                    //             ))
-                    //       ],
-                    //     ),
-                    //     Divider(
-                    //       height: 40.0,
-                    //       thickness: 1.1,
-                    //       color: Colors.black54,
-                    //     )
-                    //   ],
-                    // );
-                  },
-                ),
-                // isLoadingMore
-                //     ? Container(
-                //         padding: EdgeInsets.symmetric(vertical: 10),
-                //         child: CupertinoActivityIndicator(
-                //           radius: 20,
-                //         ),
-                //       )
-                //     : Container()
-              ],
+                            )
+                          : Container(),
+                  ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    itemCount: isLoading ? 10 : resultData.length,
+                    itemBuilder: (context, index) {
+                      return isLoading
+                          ? CustomTileSkeleton()
+                          : CustomTile(currentItem: resultData[index]);
+                      // return Column(
+                      //   children: [
+                      //     Row(
+                      //       mainAxisAlignment: MainAxisAlignment.start,
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Expanded(
+                      //           flex: 4,
+                      //           child: Padding(
+                      //             padding: EdgeInsets.only(right: 10.0),
+                      //             child: Column(
+                      //               crossAxisAlignment: CrossAxisAlignment.start,
+                      //               children: [
+                      //                 Text(
+                      //                   "Tên truyện",
+                      //                   style: TextStyle(
+                      //                       color: Colors.blue, fontSize: 18),
+                      //                 ),
+                      //                 SizedBox(
+                      //                   height: 7.5,
+                      //                 ),
+                      //                 RichText(
+                      //                     overflow: TextOverflow.ellipsis,
+                      //                     text: TextSpan(children: [
+                      //                       new TextSpan(
+                      //                           text: "1 giờ trước  ",
+                      //                           style:
+                      //                               kMediumBlackTitleTextStyle),
+                      //                       new TextSpan(
+                      //                           text: "Tên tác giả",
+                      //                           style: kMediumBlackTitleTextStyle)
+                      //                     ])),
+                      //                 SizedBox(
+                      //                   height: 5.0,
+                      //                 ),
+                      //                 Text(
+                      //                   "40 chương",
+                      //                   style: kMediumBlackTitleTextStyle,
+                      //                 ),
+                      //                 SizedBox(
+                      //                   height: 5.0,
+                      //                 ),
+                      //                 RichText(
+                      //                     overflow: TextOverflow.ellipsis,
+                      //                     text: TextSpan(children: [
+                      //                       new TextSpan(
+                      //                           text: "Thể loại 1 ",
+                      //                           style:
+                      //                               kMediumBlackTitleTextStyle),
+                      //                       new TextSpan(
+                      //                           text: "Thể loại 2 ",
+                      //                           style:
+                      //                               kMediumBlackTitleTextStyle),
+                      //                       new TextSpan(
+                      //                           text: "Thể loại 3 ",
+                      //                           style:
+                      //                               kMediumBlackTitleTextStyle),
+                      //                       new TextSpan(
+                      //                           text: "Thể loại 4 ",
+                      //                           style:
+                      //                               kMediumBlackTitleTextStyle),
+                      //                       new TextSpan(
+                      //                           text: "Thể loại 4 ",
+                      //                           style:
+                      //                               kMediumBlackTitleTextStyle),
+                      //                     ]))
+                      //               ],
+                      //             ),
+                      //           ),
+                      //         ),
+                      //         Expanded(
+                      //             flex: 1,
+                      //             child: Container(
+                      //               width: 50,
+                      //               height: 100,
+                      //               decoration: BoxDecoration(
+                      //                   color: Colors.grey[300],
+                      //                   borderRadius: BorderRadius.circular(5.0)),
+                      //             ))
+                      //       ],
+                      //     ),
+                      //     Divider(
+                      //       height: 40.0,
+                      //       thickness: 1.1,
+                      //       color: Colors.black54,
+                      //     )
+                      //   ],
+                      // );
+                    },
+                  ),
+                  // isLoadingMore
+                  //     ? Container(
+                  //         padding: EdgeInsets.symmetric(vertical: 10),
+                  //         child: CupertinoActivityIndicator(
+                  //           radius: 20,
+                  //         ),
+                  //       )
+                  //     : Container()
+                ],
+              ),
             ),
           ),
         ),

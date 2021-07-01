@@ -223,38 +223,44 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                 ],
               ),
             )
-          : Scrollbar(
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  children: [
-                    Container(
-                      color: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 15.0),
-                      // margin: EdgeInsets.only(bottom: 20),
-                      child: ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: dataList.length,
-                        itemBuilder: (context, index) {
-                          var currentItem = dataList[index];
-                          return CustomTile(currentItem: currentItem);
-                        },
+          : NotificationListener<OverscrollIndicatorNotification>(
+              onNotification: (overScroll) {
+                overScroll.disallowGlow();
+                return true;
+              },
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    children: [
+                      Container(
+                        color: Colors.white,
+                        padding: EdgeInsets.symmetric(horizontal: 15.0),
+                        // margin: EdgeInsets.only(bottom: 20),
+                        child: ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: dataList.length,
+                          itemBuilder: (context, index) {
+                            var currentItem = dataList[index];
+                            return CustomTile(currentItem: currentItem);
+                          },
+                        ),
                       ),
-                    ),
-                    this.isLoadingMore
-                        ? Container(
-                            margin: EdgeInsets.only(bottom: 30),
-                            child: Center(
-                                child: CupertinoActivityIndicator(
-                              radius: 20,
-                            )),
-                          )
-                        : SizedBox(
-                            height: 30,
-                          )
-                  ],
+                      this.isLoadingMore
+                          ? Container(
+                              margin: EdgeInsets.only(bottom: 30),
+                              child: Center(
+                                  child: CupertinoActivityIndicator(
+                                radius: 20,
+                              )),
+                            )
+                          : SizedBox(
+                              height: 30,
+                            )
+                    ],
+                  ),
                 ),
               ),
             ),
