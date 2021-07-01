@@ -27,6 +27,7 @@ class _HistoryDetailState extends State<HistoryDetail> {
   bool haveData = false;
   bool isDeleted = false;
   bool isLoading = true;
+  late String tableName;
 
   late StoryDatabase storyDatabase;
   TextEditingController _textEditingController = TextEditingController();
@@ -36,22 +37,28 @@ class _HistoryDetailState extends State<HistoryDetail> {
     // TODO: implement initState
     super.initState();
 
+    print("is read ${widget.type == "read"}");
     print("is Blank? ${widget.isBlank}");
     storyDatabase = StoryDatabase();
-    if (!widget.isBlank) {
-      getLocalData();
+    if (!widget.isBlank && widget.type == "read") {
+      // getLocalData();
+      this.tableName = "RecentRead";
+      getLocalData(tableName: this.tableName);
+    } else if (!widget.isBlank && widget.type == "favorite") {
+      this.tableName = "Favorite";
+      getLocalData(tableName: this.tableName);
     } else {
       this.isLoading = false;
       this.haveData = false;
     }
-    // if (widget.type == "read" && widget.isBlank == false) {
-    // }
+
+    // recent read
     // favorite
     // downloaded
   }
 
-  Future getLocalData() async {
-    var data = await storyDatabase.getData();
+  Future getLocalData({required String tableName}) async {
+    var data = await storyDatabase.getData(tableName: tableName);
     setState(() {
       debugPrint("data from local $data", wrapWidth: 1024);
       listToShow = data;
@@ -122,8 +129,9 @@ class _HistoryDetailState extends State<HistoryDetail> {
                                       color: Colors.red, fontSize: 18),
                                 ),
                                 onPressed: () async {
-                                  await storyDatabase.deleteAll();
-                                  await getLocalData();
+                                  await storyDatabase.deleteAll(
+                                      tableName: this.tableName);
+                                  await getLocalData(tableName: this.tableName);
                                   setState(() {
                                     this.isDeleted = true;
                                     Navigator.pop(context, this.isDeleted);
@@ -147,7 +155,7 @@ class _HistoryDetailState extends State<HistoryDetail> {
         triggerMode: RefreshIndicatorTriggerMode.onEdge,
         onRefresh: () async {
           setState(() {
-            getLocalData();
+            getLocalData(tableName: this.tableName);
           });
         },
         child: Scrollbar(
@@ -213,8 +221,9 @@ class _HistoryDetailState extends State<HistoryDetail> {
                                         onTap: () {
                                           pushNewScreen(context,
                                               screen: StoryInfo(
-                                                  storyID:
-                                                      currentItem["storyID"]),
+                                                storyID: currentItem["storyID"],
+                                                fromHistory: true,
+                                              ),
                                               withNavBar: false,
                                               pageTransitionAnimation:
                                                   PageTransitionAnimation
@@ -274,8 +283,10 @@ class _HistoryDetailState extends State<HistoryDetail> {
                                           onTap: () {
                                             pushNewScreen(context,
                                                 screen: StoryInfo(
-                                                    storyID:
-                                                        currentItem["storyID"]),
+                                                  storyID:
+                                                      currentItem["storyID"],
+                                                  fromHistory: true,
+                                                ),
                                                 withNavBar: false,
                                                 pageTransitionAnimation:
                                                     PageTransitionAnimation

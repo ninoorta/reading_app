@@ -9,7 +9,7 @@ class StoryDatabase {
     if (_database != null) return _database!;
 
     String dbPath = await getDatabasesPath();
-    _database = await openDatabase(join(dbPath, "stories_database99.db"),
+    _database = await openDatabase(join(dbPath, "database_stories.db"),
         onCreate: _createDB, version: 1);
     return _database!;
   }
@@ -23,7 +23,7 @@ class StoryDatabase {
     // var batch = db.batch();
 
     db.execute('''
-    CREATE TABLE Stories(
+    CREATE TABLE RecentRead(
     ${StoryFields.id} $idType,
     ${StoryFields.storyID} $textType UNIQUE,
     ${StoryFields.author} $textType,
@@ -33,13 +33,27 @@ class StoryDatabase {
     ${StoryFields.chapter_count} $integerType,
     ${StoryFields.current_chapter_number} $integerType
     )
-    
+        
+    ''');
+    db.execute('''
+    CREATE TABLE Favorite(
+    ${StoryFields.id} $idType,
+    ${StoryFields.storyID} $textType UNIQUE,
+    ${StoryFields.author} $textType,
+    ${StoryFields.cover} $textType,
+    ${StoryFields.full} $boolType,
+    ${StoryFields.title} $textType,
+    ${StoryFields.chapter_count} $integerType,
+    ${StoryFields.current_chapter_number} $integerType
+    )
+        
     ''');
 
     // await batch.commit(noResult: true);
   }
 
-  Future<void> insertStory(StoryModel story) async {
+  Future<void> insertStory(
+      {required String tableName, required StoryModel story}) async {
     final Database db = await createDatabase();
     final storyModel = StoryModel(
       storyID: story.storyID,
@@ -50,46 +64,19 @@ class StoryDatabase {
       chapter_count: story.chapter_count,
       currentChapterNumber: story.currentChapterNumber,
     );
-    var test = {
-      "storyID": "testStoryID",
-      "author": "testName",
-      "cover": "testCover",
-      "full": "1",
-      "title": "testTitle",
-      "chapter_count": 55,
-      "currentChapterNumber": 20
-    };
-    var test2 = {
-      "storyID": "testStoryID2",
-      "author": "\t\e\st\"\N\a\m\e\2",
-      "cover": "testCover2",
-      "full": "1",
-      "title": "testTitle2",
-      "chapter_count": 552,
-      "currentChapterNumber": 202
-    };
-    // db.insert("Stories", test1, test2);
-    // var test3 = await db.rawInsert(
-    //     "INSERT INTO Stories(storyID, author, cover, full, title, chapter_count, currentChapterNumber) "
-    //     "VALUES ('testStoryID', 'testName', 'testCover', 1, 'testTitle', 55, 20),"
-    //     " ('testStoryID2', 'testName', 'testCover', 1, 'testTitle', 55, 20);"
-    //     "");
-
-    // debugPrint(test3.toString()); // print the id of last item;
-
-    // db.transaction((txn) async {
-    //   int newID = await txn.insert("Stories", storyModel.toMap(),
-    //       conflictAlgorithm: ConflictAlgorithm.replace);
-    //   print("done with new item $newID");
-    // });
     var batch = db.batch();
-    batch.insert("Stories", storyModel.toMap(),
+    batch.insert("$tableName", storyModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
 
     await batch.commit(noResult: true);
     // await db.insert("Stories", storyModel.toMap(),
     //     conflictAlgorithm: ConflictAlgorithm.replace);
   }
+
+  // Future<void> insertFavoriteStory(
+  //     {required String tableName, required StoryModel story}) async {
+  //
+  // }
 
   // later read
   // Future<List<StoryModel>> getData() async {
@@ -98,39 +85,32 @@ class StoryDatabase {
   //   return result.map((e) => StoryModel.fromJson(e)).toList();
   // }
 
-  Future getData() async {
+  Future getData({required String tableName}) async {
     final Database db = await createDatabase();
-    var batch = db.batch();
-    // List<Map<String, Object?>> result = [];
-    // batch.query("Stories");
-    // // db.transaction((txn) async {
-    // //   result = await txn.query("Stories");
-    // // });
-    // await batch.commit(noResult: true);
-    // print("result getData $result");
-    final List<Map<String, Object?>> result = await db.query("Stories");
-    // batch.query("Stories");
-    // List result = await batch.commit();
-    // var finalResult;
-    // db.transaction((txn) async {
-    //   final List<Map<String, Object?>> result = await txn.query("Stories");
-    //   finalResult = result;
-    // });
+    final List<Map<String, Object?>> result = await db.query(tableName);
     return result;
   }
 
-  Future findWithStoryID(String storyID) async {
+  Future findWithStoryID(
+      {required String tableName, required String storyID}) async {
     final Database db = await createDatabase();
-    var result =
-        await db.query("Stories", where: 'storyID = ?', whereArgs: [storyID]);
+    var result = await db
+        .query("$tableName", where: 'storyID = ?', whereArgs: [storyID]);
     // print("result find : $result");
     return result;
   }
 
-  Future deleteAll() async {
+  Future deleteAll({required String tableName}) async {
     final Database db = await createDatabase();
     await db.rawDelete(""
-        "DELETE FROM Stories"
+        "DELETE FROM $tableName"
+        "");
+  }
+
+  Future deleteOne({required String tableName, required String storyID}) async {
+    final Database db = await createDatabase();
+    await db.rawDelete(""
+        "DELETE FROM $tableName WHERE storyID = '$storyID';"
         "");
   }
 

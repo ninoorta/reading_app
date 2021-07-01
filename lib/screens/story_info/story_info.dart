@@ -6,6 +6,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:reading_app/constants.dart';
 import 'package:reading_app/database/story_db.dart';
+import 'package:reading_app/models/story.dart';
 import 'package:reading_app/screens/story_info/components/single_choice_chip_for_link.dart';
 import 'package:reading_app/screens/story_info/download_screen.dart';
 import 'package:reading_app/screens/story_info/menu_chapters_screen.dart';
@@ -18,8 +19,10 @@ import 'package:skeleton_text/skeleton_text.dart';
 import 'components/custom_rich_text.dart';
 
 class StoryInfo extends StatefulWidget {
-  StoryInfo({Key? key, required this.storyID}) : super(key: key);
+  StoryInfo({Key? key, required this.storyID, required this.fromHistory})
+      : super(key: key);
   String storyID = "";
+  bool fromHistory;
 
   @override
   _StoryInfoState createState() => _StoryInfoState();
@@ -27,6 +30,7 @@ class StoryInfo extends StatefulWidget {
 
 class _StoryInfoState extends State<StoryInfo> {
   bool isLoading = true;
+  bool isFavorite = false;
 
   Map storyData = {};
 
@@ -64,17 +68,11 @@ class _StoryInfoState extends State<StoryInfo> {
 
     print("storyID: ${widget.storyID}");
     storyDatabase = StoryDatabase();
-    getData();
+    getDataFromAPI();
   }
 
-  // void dispose() {
-  //   storyDatabase.close();
-  //
-  //   super.dispose();
-  // }
-
   Future getDataFromDB() async {
-    var localData = await storyDatabase.getData();
+    var localData = await storyDatabase.getData(tableName: "RecentRead");
     debugPrint("local data $localData");
     setState(() {
       for (int i = 0; i < localData.length; i++) {
@@ -86,24 +84,35 @@ class _StoryInfoState extends State<StoryInfo> {
     });
   }
 
-  Future getData() async {
+  Future getDataFromAPI() async {
     storyData = await StoreInfoScreenService(storeID: widget.storyID).getData();
     // await getDataFromDB();
 
-    var findResult = await storyDatabase.findWithStoryID(widget.storyID);
+    var findRecentReadResult = await storyDatabase.findWithStoryID(
+        tableName: "RecentRead", storyID: widget.storyID);
+    var findFavoriteResult = await storyDatabase.findWithStoryID(
+        tableName: "Favorite", storyID: widget.storyID);
 
     timeData = Time().convertTimeToDHMS(
         startTime: storyData["updated"],
         endTime: (DateTime.now().millisecondsSinceEpoch / 1000).ceil());
 
     setState(() {
-      if (!findResult.isEmpty) {
-        this.currentChapterNumber = findResult[0]["currentChapterNumber"];
+      if (!findRecentReadResult.isEmpty) {
+        this.currentChapterNumber =
+            findRecentReadResult[0]["currentChapterNumber"];
         this.usedToRead = true;
         print("current ChapterNumber $currentChapterNumber");
       } else {
         print("user never reads this one before");
       }
+      if (!findFavoriteResult.isEmpty) {
+        print("user likes this one");
+        this.isFavorite = true;
+      } else {
+        print("user never likes this one before");
+      }
+
       isLoading = false;
 
       if (timeData["days"] == 0) {
@@ -154,7 +163,13 @@ class _StoryInfoState extends State<StoryInfo> {
         ),
         leading: BackButton(
           color: Colors.blue,
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (widget.fromHistory) {
+              Navigator.pop(context, this.isFavorite);
+            } else {
+              Navigator.pop(context);
+            }
+          },
         ),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -168,13 +183,15 @@ class _StoryInfoState extends State<StoryInfo> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               RawMaterialButton(
-                onPressed: () {
-                  pushNewScreen(context,
-                      screen: DownloadScreen(),
-                      withNavBar: false,
-                      pageTransitionAnimation:
-                          PageTransitionAnimation.cupertino);
-                },
+                onPressed: this.isLoading
+                    ? null
+                    : () {
+                        pushNewScreen(context,
+                            screen: DownloadScreen(),
+                            withNavBar: false,
+                            pageTransitionAnimation:
+                                PageTransitionAnimation.cupertino);
+                      },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -195,24 +212,26 @@ class _StoryInfoState extends State<StoryInfo> {
                 ),
               ),
               RawMaterialButton(
-                onPressed: () {
-                  print("user want to read this one");
+                onPressed: this.isLoading
+                    ? null
+                    : () {
+                        print("user want to read this one");
 
-                  var newCurrentChapter =
-                      Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return ReadingScreen(
-                        storyTitle: storyTitle,
-                        storyID: widget.storyID,
-                        currentChapterNumber: currentChapterNumber,
-                        chaptersCount: storyChapters,
-                      );
-                    },
-                  )).then((newChapterNumber) => setState(() {
-                            this.currentChapterNumber = newChapterNumber;
-                            this.usedToRead = true;
-                          }));
-                },
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return ReadingScreen(
+                              storyTitle: storyTitle,
+                              storyID: widget.storyID,
+                              currentChapterNumber: currentChapterNumber,
+                              chaptersCount: storyChapters,
+                              isFavorite: this.isFavorite,
+                            );
+                          },
+                        )).then((newChapterNumber) => setState(() {
+                              this.currentChapterNumber = newChapterNumber;
+                              this.usedToRead = true;
+                            }));
+                      },
                 child: Text(
                   "Đọc truyện",
                   style: TextStyle(
@@ -228,17 +247,21 @@ class _StoryInfoState extends State<StoryInfo> {
                     borderRadius: BorderRadius.circular(15.0)),
               ),
               RawMaterialButton(
-                onPressed: () {
-                  pushNewScreen(context,
-                      screen: MenuChapters(
-                        storyTitle: storyTitle,
-                        storyID: widget.storyID,
-                        chaptersCount: storyChapters,
-                      ),
-                      withNavBar: false,
-                      pageTransitionAnimation:
-                          PageTransitionAnimation.cupertino);
-                },
+                onPressed: this.isLoading
+                    ? null
+                    : () {
+                        pushNewScreen(context,
+                            screen: MenuChapters(
+                              storyTitle: storyTitle,
+                              storyID: widget.storyID,
+                              chaptersCount: storyChapters,
+                              isFavorite: this.isFavorite,
+                              fromReading: false,
+                            ),
+                            withNavBar: false,
+                            pageTransitionAnimation:
+                                PageTransitionAnimation.cupertino);
+                      },
                 child: Column(
                   children: <Widget>[
                     Icon(
@@ -296,7 +319,7 @@ class _StoryInfoState extends State<StoryInfo> {
                 onRefresh: () async {
                   setState(() {
                     this.isLoading = true;
-                    getData();
+                    getDataFromAPI();
                   });
                 },
                 child: Scrollbar(
@@ -458,16 +481,44 @@ class _StoryInfoState extends State<StoryInfo> {
                                 constraints: BoxConstraints(
                                     minWidth: 35.0, minHeight: 35.0),
                                 onPressed: () {
-                                  print("user choose this as favorite one");
+                                  // print("user choose this as favorite one");
+                                  if (this.isFavorite == true) {
+                                    setState(() {
+                                      this.isFavorite = false;
+                                      storyDatabase.deleteOne(
+                                          tableName: "Favorite",
+                                          storyID: widget.storyID);
+                                    });
+                                  } else {
+                                    setState(() {
+                                      this.isFavorite = true;
+                                      storyDatabase.insertStory(
+                                          tableName: "Favorite",
+                                          story: StoryModel(
+                                              storyID: widget.storyID,
+                                              author: storyAuthor,
+                                              cover: storyImageCoverURL,
+                                              full: storyData["full"] ? 1 : 0,
+                                              title: storyTitle,
+                                              chapter_count: storyChapters,
+                                              currentChapterNumber:
+                                                  currentChapterNumber));
+                                    });
+                                  }
+                                  print("current favorite $isFavorite");
                                 },
                                 elevation: 1.0,
                                 fillColor: Colors.white,
                                 splashColor: Colors.lightBlue[200],
                                 padding: EdgeInsets.zero,
                                 child: Icon(
-                                  Icons.favorite_border,
+                                  this.isFavorite
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
                                   size: 25.0,
-                                  color: Colors.blue,
+                                  color: this.isFavorite
+                                      ? Colors.red
+                                      : Colors.blue,
                                 ),
                                 shape: CircleBorder(
                                     side: BorderSide(color: Colors.blue)),

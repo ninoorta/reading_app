@@ -41,7 +41,10 @@ class CustomTile extends StatelessWidget {
           print("tap group item ${currentItem["_id"]["\$oid"]}");
 
           pushNewScreen(context,
-              screen: StoryInfo(storyID: currentItem["_id"]["\$oid"]),
+              screen: StoryInfo(
+                storyID: currentItem["_id"]["\$oid"],
+                fromHistory: false,
+              ),
               withNavBar: false,
               pageTransitionAnimation: PageTransitionAnimation.cupertino);
         },

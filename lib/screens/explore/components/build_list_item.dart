@@ -18,6 +18,7 @@ class BuildListItem extends StatelessWidget {
         pushNewScreen(context,
             screen: StoryInfo(
               storyID: item["_id"]["\$oid"],
+              fromHistory: false,
             ),
             withNavBar: false,
             pageTransitionAnimation: PageTransitionAnimation.cupertino);

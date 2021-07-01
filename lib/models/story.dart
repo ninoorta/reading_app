@@ -14,7 +14,7 @@ class StoryModel {
   final String storyID;
   final String author;
   final String cover;
-  final int full;
+  final int full; // 1  ~ true , 0 ~ false
   final String title;
   final int chapter_count;
   final int currentChapterNumber;

@@ -10,18 +10,20 @@ import 'package:reading_app/services/story_info_screen_service.dart';
 import 'menu_chapters_screen.dart';
 
 class ReadingScreen extends StatefulWidget {
-  ReadingScreen({
-    Key? key,
-    required this.storyTitle,
-    required this.storyID,
-    required this.chaptersCount,
-    required this.currentChapterNumber,
-  }) : super(key: key);
+  ReadingScreen(
+      {Key? key,
+      required this.storyTitle,
+      required this.storyID,
+      required this.chaptersCount,
+      required this.currentChapterNumber,
+      required this.isFavorite})
+      : super(key: key);
 
   final String storyID;
   final String storyTitle;
   final int chaptersCount;
   final int currentChapterNumber;
+  final bool isFavorite;
 
   @override
   _ReadingScreenState createState() => _ReadingScreenState();
@@ -61,14 +63,29 @@ class _ReadingScreenState extends State<ReadingScreen> {
         await StoreInfoScreenService(storeID: widget.storyID).getData();
     this.storyToStore = apiResult;
 
-    await storyDatabase.insertStory(StoryModel(
-        storyID: widget.storyID,
-        author: storyToStore["author"],
-        cover: storyToStore["cover"],
-        full: storyToStore["full"] == true ? 1 : 0,
-        title: storyToStore["title"],
-        chapter_count: storyToStore["chapter_count"],
-        currentChapterNumber: this.currentChapterNumber));
+    await storyDatabase.insertStory(
+        tableName: "RecentRead",
+        story: StoryModel(
+            storyID: widget.storyID,
+            author: storyToStore["author"],
+            cover: storyToStore["cover"],
+            full: storyToStore["full"] == true ? 1 : 0,
+            title: storyToStore["title"],
+            chapter_count: storyToStore["chapter_count"],
+            currentChapterNumber: this.currentChapterNumber));
+
+    if (widget.isFavorite) {
+      await storyDatabase.insertStory(
+          tableName: "Favorite",
+          story: StoryModel(
+              storyID: widget.storyID,
+              author: storyToStore["author"],
+              cover: storyToStore["cover"],
+              full: storyToStore["full"] == true ? 1 : 0,
+              title: storyToStore["title"],
+              chapter_count: storyToStore["chapter_count"],
+              currentChapterNumber: this.currentChapterNumber));
+    }
   }
 
   Future getData() async {
@@ -93,7 +110,6 @@ class _ReadingScreenState extends State<ReadingScreen> {
     });
     await getStoryDataToStore();
     print("story author ${this.storyToStore["author"]}");
-    // 15:29
   }
 
   @override
@@ -185,12 +201,22 @@ class _ReadingScreenState extends State<ReadingScreen> {
                                   borderRadius: BorderRadius.circular(10)),
                               height: MediaQuery.of(context).size.height * 0.95,
                               child: MenuChapters(
-                                  storyTitle: widget.storyTitle,
-                                  storyID: widget.storyID,
-                                  chaptersCount: widget.chaptersCount),
+                                storyTitle: widget.storyTitle,
+                                storyID: widget.storyID,
+                                chaptersCount: widget.chaptersCount,
+                                isFavorite: widget.isFavorite,
+                                fromReading: true,
+                              ),
                             );
                           },
-                        );
+                        ).then((chosenChapterNumber) {
+                          if (chosenChapterNumber != null) {
+                            setState(() {
+                              this.currentChapterNumber = chosenChapterNumber;
+                              getData();
+                            });
+                          }
+                        });
                       },
                       icon: Icon(
                         Icons.menu,

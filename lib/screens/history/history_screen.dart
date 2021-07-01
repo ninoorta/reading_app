@@ -12,6 +12,7 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> {
   bool isLoading = true;
   List recentReadData = [];
+  List favoriteData = [];
   late StoryDatabase storyDatabase;
 
   @override
@@ -25,9 +26,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   Future getLocalData() async {
     print("${DateTime.now()} get localdata run");
-    var data = await storyDatabase.getData();
+    var data1 = await storyDatabase.getData(tableName: "RecentRead");
+    var data2 = await storyDatabase.getData(tableName: "Favorite");
     setState(() {
-      recentReadData = data;
+      recentReadData = data1;
+      favoriteData = data2;
       // debugPrint("hey it's local recent read data $recentReadData",
       //     wrapWidth: 1024);
       this.isLoading = false;
@@ -91,12 +94,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             ),
                             BuildHistoryList(
                               title: "Yêu Thích Gần Đây",
+                              data: favoriteData.isEmpty ? null : favoriteData,
                               refreshFunc: getLocalData,
                             ),
-                            BuildHistoryList(
-                              title: "Tải Gần Đây",
-                              refreshFunc: getLocalData,
-                            ),
+                            // later
+                            // BuildHistoryList(
+                            //   title: "Tải Gần Đây",
+                            //   refreshFunc: getLocalData,
+                            // ),
                           ],
                         ),
                 ),

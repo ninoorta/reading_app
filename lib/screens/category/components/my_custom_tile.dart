@@ -37,7 +37,10 @@ class MyCustomTile extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           pushNewScreen(context,
-              screen: StoryInfo(storyID: currentItemData["_id"]["\$oid"]),
+              screen: StoryInfo(
+                storyID: currentItemData["_id"]["\$oid"],
+                fromHistory: false,
+              ),
               withNavBar: false,
               pageTransitionAnimation: PageTransitionAnimation.cupertino);
         },

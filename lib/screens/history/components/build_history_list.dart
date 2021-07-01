@@ -39,7 +39,8 @@ class _BuildHistoryListState extends State<BuildHistoryList> {
                   var isDeleted = await Navigator.push(context,
                       MaterialPageRoute(builder: (context) {
                     return HistoryDetail(
-                        type: "read",
+                        type:
+                            widget.title == "Đọc Gần Đây" ? "read" : "favorite",
                         isBlank: widget.data == null ? true : false);
                   }));
 
@@ -66,7 +67,7 @@ class _BuildHistoryListState extends State<BuildHistoryList> {
                 var isDeleted = await Navigator.push(context,
                     MaterialPageRoute(builder: (context) {
                   return HistoryDetail(
-                      type: "read",
+                      type: widget.title == "Đọc Gần Đây" ? "read" : "favorite",
                       isBlank: widget.data == null ? true : false);
                 }));
                 print("is Deleted $isDeleted");
@@ -123,11 +124,20 @@ class _BuildHistoryListState extends State<BuildHistoryList> {
                           ),
                           onTap: () {
                             pushNewScreen(context,
-                                screen:
-                                    StoryInfo(storyID: currentItem["storyID"]),
-                                withNavBar: false,
-                                pageTransitionAnimation:
-                                    PageTransitionAnimation.cupertino);
+                                    screen: StoryInfo(
+                                      storyID: currentItem["storyID"],
+                                      fromHistory: true,
+                                    ),
+                                    withNavBar: false,
+                                    pageTransitionAnimation:
+                                        PageTransitionAnimation.cupertino)
+                                .then((value) {
+                              print("receive value $value");
+
+                              if (!value) {
+                                widget.refreshFunc();
+                              }
+                            });
                           },
                         ),
                         SizedBox(
@@ -146,11 +156,19 @@ class _BuildHistoryListState extends State<BuildHistoryList> {
                           ),
                           onTap: () {
                             pushNewScreen(context,
-                                screen:
-                                    StoryInfo(storyID: currentItem["storyID"]),
-                                withNavBar: false,
-                                pageTransitionAnimation:
-                                    PageTransitionAnimation.cupertino);
+                                    screen: StoryInfo(
+                                      storyID: currentItem["storyID"],
+                                      fromHistory: true,
+                                    ),
+                                    withNavBar: false,
+                                    pageTransitionAnimation:
+                                        PageTransitionAnimation.cupertino)
+                                .then((value) {
+                              print("receive value $value");
+                              if (!value) {
+                                widget.refreshFunc();
+                              }
+                            });
                           },
                         )
                       ],

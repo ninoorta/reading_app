@@ -6,16 +6,20 @@ import 'package:reading_app/services/story_info_screen_service.dart';
 import 'package:reading_app/utilities/time.dart';
 
 class MenuChapters extends StatefulWidget {
-  const MenuChapters({
-    Key? key,
-    required this.storyTitle,
-    required this.storyID,
-    required this.chaptersCount,
-  }) : super(key: key);
+  const MenuChapters(
+      {Key? key,
+      required this.storyTitle,
+      required this.storyID,
+      required this.chaptersCount,
+      required this.isFavorite,
+      required this.fromReading})
+      : super(key: key);
 
   final String storyTitle;
   final String storyID;
   final int chaptersCount;
+  final bool isFavorite;
+  final bool fromReading;
 
   @override
   _MenuChaptersState createState() => _MenuChaptersState();
@@ -238,20 +242,26 @@ class _MenuChaptersState extends State<MenuChapters> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              Navigator.pop(context);
-
-                              pushNewScreen(
-                                context,
-                                screen: ReadingScreen(
-                                  storyTitle: widget.storyTitle,
-                                  storyID: widget.storyID,
-                                  chaptersCount: widget.chaptersCount,
-                                  currentChapterNumber: currentItem["number"],
-                                ),
-                                withNavBar: false,
-                                pageTransitionAnimation:
-                                    PageTransitionAnimation.cupertino,
-                              );
+                              if (widget.fromReading) {
+                                Navigator.pop(context, currentItem["number"]);
+                              } else {
+                                Navigator.pop(context);
+                                print(
+                                    "chosen chapter ${currentItem["number"]}");
+                                pushNewScreen(
+                                  context,
+                                  screen: ReadingScreen(
+                                    storyTitle: widget.storyTitle,
+                                    storyID: widget.storyID,
+                                    chaptersCount: widget.chaptersCount,
+                                    currentChapterNumber: currentItem["number"],
+                                    isFavorite: widget.isFavorite,
+                                  ),
+                                  withNavBar: false,
+                                  pageTransitionAnimation:
+                                      PageTransitionAnimation.cupertino,
+                                );
+                              }
                             },
                             child: Container(
                               margin: EdgeInsets.symmetric(vertical: 2.0),
