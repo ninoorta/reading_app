@@ -195,8 +195,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                     MediaQuery.of(context).size.height * 0.6,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Container(
                                       child: Text(

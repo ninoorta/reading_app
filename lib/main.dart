@@ -7,15 +7,21 @@ import 'package:reading_app/screens/search/search_screen.dart';
 
 import 'screens/explore/explore_screen.dart';
 
-Future<void> main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await SystemChrome.setPreferredOrientations(
-  //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  //
-  // print("start init");
-  // // await StoryPreferences.init();
-  //
-  // print("finish init");
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // final adsInitialization = MobileAds.instance.initialize();
+  // final adState = AdState(initialization: adsInitialization);
+
+  // runApp(ProviderScope(overrides: [
+  //   adStateProvider.overrideWithValue(adState),
+  // ], child: MyApp()));
+
+  // await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+  //   statusBarColor: Colors.transparent,
+  //   statusBarIconBrightness: Brightness.dark,
+  // ));
+  // Admob.initialize();
 
   runApp(MyApp());
 }

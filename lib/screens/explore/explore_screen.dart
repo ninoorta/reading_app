@@ -23,6 +23,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   List recentUpdatedStories = [];
   List otherList = [];
 
+  bool adLoading = false;
   final List<String> typeList = [
     "Ngôn Tình",
     "Đam Mỹ",
@@ -32,13 +33,47 @@ class _ExploreScreenState extends State<ExploreScreen> {
     "Đô Thị"
   ];
 
-  // late StoryDatabase storyDatabase;
+  bool isDarkModeEnabled = false;
+  // late BannerAd myBannerAd;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    // BannerAd myBannerAd = BannerAd(
+    //   adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+    //   size: AdSize.banner,
+    //   request: AdRequest(),
+    //   listener: BannerAdListener(onAdClosed: (ad) {
+    //     print("Closed Ad $ad");
+    //   }, onAdOpened: (ad) {
+    //     print("Opened Ad $ad");
+    //   }, onAdLoaded: (_) {
+    //     setState(() {
+    //       this.adLoading = true;
+    //     });
+    //   }, onAdFailedToLoad: (ad, error) {
+    //     print('Ad failed to load with error: $error');
+    //     ad.dispose();
+    //   }),
+    // );
+    //
+    // myBannerAd.load();
     getData();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+
+    super.dispose();
+  }
+
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // final adState = context.read(adStateProvider);
+    // adState.
   }
 
   Future<void> getData() async {
@@ -53,10 +88,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
     });
   }
 
-  Widget buildOtherGroup() {
-    return Text("");
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,6 +99,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
+        actions: [],
       ),
       body: RefreshIndicator(
         triggerMode: RefreshIndicatorTriggerMode.onEdge,
@@ -85,7 +117,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
           child: Scrollbar(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              physics: ClampingScrollPhysics(),
               child: Container(
                 color: Colors.white,
                 padding: EdgeInsets.symmetric(horizontal: 15.0),
@@ -93,6 +124,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // SizedBox(
+                    //   height: 50,
+                    //   child: adLoading
+                    //       ? Container()
+                    //       : AdWidget(
+                    //           ad: myBannerAd,
+                    //         ),
+                    // ),
                     CustomListView(
                       listName: "Mới Đăng",
                       isLoading: isLoading,

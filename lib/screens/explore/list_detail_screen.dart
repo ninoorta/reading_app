@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:reading_app/constants.dart';
 import 'package:reading_app/screens/explore/components/custom_tile.dart';
 import 'package:reading_app/services/explore_screen_service.dart';
@@ -25,11 +26,47 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
 
   ScrollController _scrollController = ScrollController();
 
+  bool isAdAlready = false;
+  late BannerAd myBannerAd;
+  late InterstitialAd myInterAd;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
+    // BannerAd myBannerAd = BannerAd(
+    //   adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+    //   size: AdSize.banner,
+    //   request: AdRequest(),
+    //   listener: BannerAdListener(onAdClosed: (ad) {
+    //     print("Closed Ad $ad");
+    //   }, onAdOpened: (ad) {
+    //     print("Opened Ad $ad");
+    //   }, onAdLoaded: (_) {
+    //     setState(() {
+    //       this.isAdAlready = true;
+    //     });
+    //   }, onAdFailedToLoad: (ad, error) {
+    //     print("bannerad $ad");
+    //     print('Ad failed to load with error: $error');
+    //     ad.dispose();
+    //   }),
+    // );
+
+    InterstitialAd.load(
+        adUnitId: 'ca-app-pub-3940256099942544/1033173712',
+        request: AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            // Keep a reference to the ad so you can show it later.
+            this.myInterAd = ad;
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error');
+          },
+        ));
+    // myBannerAd.load();
     print("start to build UI");
     print("isNewPublish ${widget.isNewPublish}");
 
@@ -234,6 +271,11 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                   scrollDirection: Axis.vertical,
                   child: Column(
                     children: [
+                      SizedBox(
+                          height: 50,
+                          child: this.isAdAlready
+                              ? AdWidget(ad: myBannerAd)
+                              : null),
                       Container(
                         color: Colors.white,
                         padding: EdgeInsets.symmetric(horizontal: 15.0),
