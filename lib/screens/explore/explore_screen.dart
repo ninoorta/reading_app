@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:reading_app/constants.dart';
 import 'package:reading_app/screens/category/category_screen.dart';
@@ -34,32 +35,32 @@ class _ExploreScreenState extends State<ExploreScreen> {
   ];
 
   bool isDarkModeEnabled = false;
-  // late BannerAd myBannerAd;
+  late BannerAd myBannerAd;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    // BannerAd myBannerAd = BannerAd(
-    //   adUnitId: 'ca-app-pub-3940256099942544/6300978111',
-    //   size: AdSize.banner,
-    //   request: AdRequest(),
-    //   listener: BannerAdListener(onAdClosed: (ad) {
-    //     print("Closed Ad $ad");
-    //   }, onAdOpened: (ad) {
-    //     print("Opened Ad $ad");
-    //   }, onAdLoaded: (_) {
-    //     setState(() {
-    //       this.adLoading = true;
-    //     });
-    //   }, onAdFailedToLoad: (ad, error) {
-    //     print('Ad failed to load with error: $error');
-    //     ad.dispose();
-    //   }),
-    // );
-    //
-    // myBannerAd.load();
+     myBannerAd = BannerAd(
+      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(onAdClosed: (ad) {
+        print("Closed Ad $ad");
+      }, onAdOpened: (ad) {
+        print("Opened Ad $ad");
+      }, onAdLoaded: (_) {
+        setState(() {
+          this.adLoading = true;
+        });
+      }, onAdFailedToLoad: (ad, error) {
+        print('Ad failed to load with error: $error');
+        ad.dispose();
+      }),
+    );
+
+    myBannerAd.load();
     getData();
   }
 
@@ -124,20 +125,21 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // SizedBox(
-                    //   height: 50,
-                    //   child: adLoading
-                    //       ? Container()
-                    //       : AdWidget(
-                    //           ad: myBannerAd,
-                    //         ),
-                    // ),
+                    SizedBox(
+                      height: 50,
+                      child: adLoading
+                          ? Container()
+                          : AdWidget(
+                              ad: myBannerAd,
+                            ),
+                    ),
                     CustomListView(
                       listName: "Mới Đăng",
                       isLoading: isLoading,
                       listData: newStories,
                       isNewPublish: true,
                     ),
+
                     CustomListView(
                       listName: "Mới Cập Nhật",
                       isLoading: isLoading,
