@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:reading_app/ads/ad_state.dart';
 import 'package:reading_app/constants.dart';
 import 'package:reading_app/screens/explore/components/custom_tile.dart';
 import 'package:reading_app/screens/explore/components/custom_tile_skeleton.dart';
@@ -20,6 +22,7 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
   bool isLoadingMore = false;
   List resultData = [];
   int offset = 0;
+  int limit = 36;
   int pageNumber = 1;
 
   int full = 2;
@@ -30,10 +33,33 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
 
   ScrollController _scrollController = ScrollController();
 
+  late BannerAd myBannerAd;
+
+  bool isBannerAdAlready = false;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    myBannerAd = BannerAd(
+        adUnitId: AdState.bannerAdUnitID,
+        size: AdSize.smartBanner,
+        request: AdRequest(),
+        listener: BannerAdListener(onAdClosed: (ad) {
+          print("Closed Ad $ad");
+        }, onAdOpened: (ad) {
+          print("Opened Ad $ad");
+        }, onAdLoaded: (ad) {
+          print("ad loaded  $ad");
+          setState(() {
+            this.isBannerAdAlready = true;
+          });
+        }, onAdFailedToLoad: (ad, error) {
+          print('Ad failed to load with error: $error');
+          ad.dispose();
+        }));
+    myBannerAd.load();
 
     full = widget.argumentsForGetData["full"];
     maxChapter = widget.argumentsForGetData["max_chapter"];
@@ -60,7 +86,6 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
 
   Future getMoreData() async {
     // limit = 36 ;
-
     setState(() {
       offset = offset + 36;
       this.pageNumber = this.pageNumber + 1;
@@ -68,6 +93,7 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
 
     var apiResult = await SearchScreenService().getFilterData(
         offset: offset,
+        limit: limit,
         full: full,
         maxChapter: maxChapter,
         minChapter: minChapter,
@@ -76,6 +102,34 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
 
     setState(() {
       resultData = resultData + apiResult;
+      print("current offset $DiagnosticLevel.off");
+      var startIndex = this.offset;
+      if(this.offset > this.resultData.length){
+        if(this.resultData.length == 36){
+          startIndex = 0;
+        } else {
+          startIndex = ( (this.resultData.length ~/ 36)  - 1) * 36;
+        }
+
+      }
+      for (var i = startIndex; i < this.resultData.length; i++) {
+        if (i % 6 == 0) {
+          if (this.resultData[i] is BannerAd) {
+          } else {
+            print("insert ad in index: $i");
+            print("this title ${this.resultData[i]["title"]}");
+            this.resultData.insert(
+                i,
+                BannerAd(
+                    adUnitId: AdState.bannerAdUnitID,
+                    size: AdSize.smartBanner,
+                    request: AdRequest(),
+                    listener: AdState.listener)
+                  ..load());
+          }
+          i++;
+        }
+      }
       this.isLoadingMore = false;
     });
   }
@@ -84,6 +138,7 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
     this.isLoading = true;
     var apiResult = await SearchScreenService().getFilterData(
         offset: offset,
+        limit: limit,
         full: full,
         maxChapter: maxChapter,
         minChapter: minChapter,
@@ -92,6 +147,34 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
 
     setState(() {
       resultData = apiResult;
+
+      print("run to this");
+      if (resultData.isNotEmpty) {
+        print("run to isNotEmpty, current offset $offset");
+        var startIndex = this.offset;
+        if(offset > this.resultData.length){
+          startIndex = 0;
+        }
+        for (var i = startIndex; i < this.resultData.length; i++) {
+          if (i % 6 == 0) {
+            if (this.resultData[i] is BannerAd) {
+            } else {
+              print("insert ad in index: $i");
+              print("this title ${this.resultData[i]["title"]}");
+              this.resultData.insert(
+                  i,
+                  BannerAd(
+                      adUnitId: AdState.bannerAdUnitID,
+                      size: AdSize.smartBanner,
+                      request: AdRequest(),
+                      listener: AdState.listener)
+                    ..load());
+            }
+            i++;
+          }
+        }
+      }
+
       this.isLoading = false;
     });
   }
@@ -100,6 +183,7 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           "Lọc Truyện",
@@ -156,7 +240,7 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
                                 this.offset = 36 * (int.parse(newValue) - 1);
                                 this.pageNumber = int.parse(newValue);
                                 Navigator.of(context).pop();
-
+                                this._scrollController.jumpTo(0);
                                 getData();
                               });
                             },
@@ -190,6 +274,7 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
                               setState(() {
                                 // print("current offset ${this.offset}");
                                 this.pageNumber = (this.offset ~/ 36) + 1;
+                                this._scrollController.jumpTo(0);
                                 getData();
                               });
                             },
@@ -242,105 +327,12 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
                     itemBuilder: (context, index) {
                       return isLoading
                           ? CustomTileSkeleton()
-                          : CustomTile(currentItem: resultData[index]);
-                      // return Column(
-                      //   children: [
-                      //     Row(
-                      //       mainAxisAlignment: MainAxisAlignment.start,
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         Expanded(
-                      //           flex: 4,
-                      //           child: Padding(
-                      //             padding: EdgeInsets.only(right: 10.0),
-                      //             child: Column(
-                      //               crossAxisAlignment: CrossAxisAlignment.start,
-                      //               children: [
-                      //                 Text(
-                      //                   "Tên truyện",
-                      //                   style: TextStyle(
-                      //                       color: Colors.blue, fontSize: 18),
-                      //                 ),
-                      //                 SizedBox(
-                      //                   height: 7.5,
-                      //                 ),
-                      //                 RichText(
-                      //                     overflow: TextOverflow.ellipsis,
-                      //                     text: TextSpan(children: [
-                      //                       new TextSpan(
-                      //                           text: "1 giờ trước  ",
-                      //                           style:
-                      //                               kMediumBlackTitleTextStyle),
-                      //                       new TextSpan(
-                      //                           text: "Tên tác giả",
-                      //                           style: kMediumBlackTitleTextStyle)
-                      //                     ])),
-                      //                 SizedBox(
-                      //                   height: 5.0,
-                      //                 ),
-                      //                 Text(
-                      //                   "40 chương",
-                      //                   style: kMediumBlackTitleTextStyle,
-                      //                 ),
-                      //                 SizedBox(
-                      //                   height: 5.0,
-                      //                 ),
-                      //                 RichText(
-                      //                     overflow: TextOverflow.ellipsis,
-                      //                     text: TextSpan(children: [
-                      //                       new TextSpan(
-                      //                           text: "Thể loại 1 ",
-                      //                           style:
-                      //                               kMediumBlackTitleTextStyle),
-                      //                       new TextSpan(
-                      //                           text: "Thể loại 2 ",
-                      //                           style:
-                      //                               kMediumBlackTitleTextStyle),
-                      //                       new TextSpan(
-                      //                           text: "Thể loại 3 ",
-                      //                           style:
-                      //                               kMediumBlackTitleTextStyle),
-                      //                       new TextSpan(
-                      //                           text: "Thể loại 4 ",
-                      //                           style:
-                      //                               kMediumBlackTitleTextStyle),
-                      //                       new TextSpan(
-                      //                           text: "Thể loại 4 ",
-                      //                           style:
-                      //                               kMediumBlackTitleTextStyle),
-                      //                     ]))
-                      //               ],
-                      //             ),
-                      //           ),
-                      //         ),
-                      //         Expanded(
-                      //             flex: 1,
-                      //             child: Container(
-                      //               width: 50,
-                      //               height: 100,
-                      //               decoration: BoxDecoration(
-                      //                   color: Colors.grey[300],
-                      //                   borderRadius: BorderRadius.circular(5.0)),
-                      //             ))
-                      //       ],
-                      //     ),
-                      //     Divider(
-                      //       height: 40.0,
-                      //       thickness: 1.1,
-                      //       color: Colors.black54,
-                      //     )
-                      //   ],
-                      // );
+                          : CustomTile(
+                              currentItem: resultData[index],
+                              key: Key(index.toString()),
+                            );
                     },
                   ),
-                  // isLoadingMore
-                  //     ? Container(
-                  //         padding: EdgeInsets.symmetric(vertical: 10),
-                  //         child: CupertinoActivityIndicator(
-                  //           radius: 20,
-                  //         ),
-                  //       )
-                  //     : Container()
                 ],
               ),
             ),

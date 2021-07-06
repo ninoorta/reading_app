@@ -218,16 +218,6 @@ class _SearchScreenState extends State<SearchScreen> {
                                           onPressed: () {
                                             print(
                                                 "click to move to filter screen");
-                                            //
-                                            // pushNewScreen(
-                                            //   context,
-                                            //   screen: FilterScreen(),
-                                            //   withNavBar: false,
-                                            //   // OPTIONAL VALUE. True by default.
-                                            //   pageTransitionAnimation:
-                                            //       PageTransitionAnimation.cupertino,
-                                            // );
-
                                             Navigator.push(context,
                                                 MaterialPageRoute(
                                               builder: (context) {
