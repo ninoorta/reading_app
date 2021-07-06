@@ -1,4 +1,4 @@
-package com.gemmob.reading_app
+package com.apptruyen.truyenonline
 
 import io.flutter.embedding.android.FlutterActivity
 //import io.flutter.embedding.engine.FlutterEngine

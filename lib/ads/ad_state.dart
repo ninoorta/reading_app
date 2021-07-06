@@ -9,7 +9,7 @@ class AdState {
 
   static String get bannerAdUnitID {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/6300978111';
+      return 'ca-app-pub-8875774011985639/5119385880';
     } else if(Platform.isIOS) {
       return "ios ad unit id";
     } else {
@@ -36,7 +36,7 @@ class AdState {
 
   static String get interstitialAdUnitID {
     if(Platform.isAndroid){
-      return 'ca-app-pub-3940256099942544/1033173712';
+      return 'ca-app-pub-8875774011985639/1710376493';
     } else if(Platform.isIOS) {
       return 'ios ad unit id';
     } else {

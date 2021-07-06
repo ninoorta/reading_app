@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -5,7 +7,6 @@ import 'package:reading_app/ads/ad_state.dart';
 import 'package:reading_app/constants.dart';
 import 'package:reading_app/screens/explore/components/custom_tile.dart';
 import 'package:reading_app/services/explore_screen_service.dart';
-import 'dart:math';
 
 class ListDetailScreen extends StatefulWidget {
   ListDetailScreen({required this.isNewPublish, required this.listName});
@@ -85,8 +86,12 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
 
     print("change dependencies");
   }
+  
+  void showLoading() {
+  }
 
   Future getMoreData() async {
+    
     setState(() {
       this.isLoadingMore = true;
       // limit 20
@@ -118,7 +123,6 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
           i++;
         }
       }
-
       this.isLoadingMore = false;
     });
   }

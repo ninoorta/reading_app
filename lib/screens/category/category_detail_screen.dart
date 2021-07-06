@@ -252,16 +252,6 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
                   selectedGenre: widget.selectedGenre,
                   sortType: sort[3],
                   limitItem: limitItem),
-              // CustomTabBarContent(
-              //     scrollController: _scrollController,
-              //     categoryDetailData: newPublishData,
-              //     isLoading: isLoading,
-              //     isLoadingMore: isLoadingMore),
-              // CustomTabBarContent(
-              //     scrollController: _scrollController,
-              //     categoryDetailData: newUpdatedData,
-              //     isLoading: isLoading,
-              //     isLoadingMore: isLoadingMore),
             ],
           ),
         ),
