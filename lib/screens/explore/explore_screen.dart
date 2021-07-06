@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:reading_app/ads/ad_state.dart';
 import 'package:reading_app/constants.dart';
 import 'package:reading_app/screens/category/category_screen.dart';
+
 // services
 import 'package:reading_app/services/explore_screen_service.dart';
 
@@ -24,7 +26,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   List recentUpdatedStories = [];
   List otherList = [];
 
-  bool adLoading = false;
+  bool isBannerAdAlready = false;
   final List<String> typeList = [
     "Ngôn Tình",
     "Đam Mỹ",
@@ -36,23 +38,26 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   bool isDarkModeEnabled = false;
   late BannerAd myBannerAd;
+  late NativeAd myNativeAd;
+  bool isNativeAdAlready = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-     myBannerAd = BannerAd(
-      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
-      size: AdSize.banner,
+    myBannerAd = BannerAd(
+      adUnitId: AdState.bannerAdUnitID,
+      size: AdSize.smartBanner,
       request: AdRequest(),
       listener: BannerAdListener(onAdClosed: (ad) {
         print("Closed Ad $ad");
       }, onAdOpened: (ad) {
         print("Opened Ad $ad");
-      }, onAdLoaded: (_) {
+      }, onAdLoaded: (ad) {
+        print("ad loaded  $ad");
         setState(() {
-          this.adLoading = true;
+          this.isBannerAdAlready = true;
         });
       }, onAdFailedToLoad: (ad, error) {
         print('Ad failed to load with error: $error');
@@ -61,14 +66,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
 
     myBannerAd.load();
+
+    // remember to try for native ad later.
     getData();
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-
-    super.dispose();
   }
 
   void didChangeDependencies() {
@@ -126,8 +126,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     SizedBox(
-                      height: 50,
-                      child: adLoading
+                      width: MediaQuery.of(context).size.width - 30,
+                      height: 100,
+                      child: !isBannerAdAlready
                           ? Container()
                           : AdWidget(
                               ad: myBannerAd,
@@ -139,7 +140,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       listData: newStories,
                       isNewPublish: true,
                     ),
-
+                    this.isNativeAdAlready
+                        ? AdWidget(ad: myNativeAd)
+                        : Container(),
                     CustomListView(
                       listName: "Mới Cập Nhật",
                       isLoading: isLoading,

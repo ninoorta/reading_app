@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gemmob.reading_app">
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
        android:label="reading_app"
-       android:name="androidx.multidex.MultiDexApplication" >
        android:icon="@mipmap/ic_launcher">
        <activity
             android:name=".MainActivity"
@@ -40,6 +40,6 @@
             android:value="2" />
        <meta-data
            android:name="com.google.android.gms.ads.APPLICATION_ID"
-           android:value="ca-app-pub-3940256099942544~3347511713"/>
+           android:value="ca-app-pub-5650242957193897~9494689717"/>
     </application>
 </manifest>

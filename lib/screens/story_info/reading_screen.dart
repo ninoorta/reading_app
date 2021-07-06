@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:reading_app/ads/ad_state.dart';
 import 'package:reading_app/database/story_db.dart';
 import 'package:reading_app/models/story.dart';
+
 // services
 import 'package:reading_app/services/story_detail_screen_service.dart';
 import 'package:reading_app/services/story_info_screen_service.dart';
@@ -43,6 +46,8 @@ class _ReadingScreenState extends State<ReadingScreen> {
 
   List test = [];
 
+  late InterstitialAd _interstitialAd;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -51,7 +56,35 @@ class _ReadingScreenState extends State<ReadingScreen> {
     visible = true;
     currentChapterNumber = widget.currentChapterNumber;
     print("user current chapter number $currentChapterNumber");
+
+
+    InterstitialAd.load(
+        adUnitId: AdState.interstitialAdUnitID,
+        request: AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+            onAdLoaded: (InterstitialAd ad) {
+              print("interstitial ad loaded");
+              this._interstitialAd = ad;
+
+              this._interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+                onAdShowedFullScreenContent: (InterstitialAd ad) =>
+                    print('$ad onAdShowedFullScreenContent.'),
+                onAdDismissedFullScreenContent: (InterstitialAd ad) {
+                  print('$ad onAdDismissedFullScreenContent.');
+                  ad.dispose();
+                },
+                onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+                  print('$ad onAdFailedToShowFullScreenContent: $error');
+                  ad.dispose();
+                },
+                onAdImpression: (InterstitialAd ad) => print('$ad impression occurred.'),
+              );
+            },
+            onAdFailedToLoad: (LoadAdError error) =>
+                print('Interstitial failed to load: $error')));
+
     getData();
+
   }
 
   void dispose() {
@@ -88,6 +121,34 @@ class _ReadingScreenState extends State<ReadingScreen> {
     }
   }
 
+  void loadInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: AdState.interstitialAdUnitID,
+        request: AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+            onAdLoaded: (InterstitialAd ad) {
+              print("interstitial ad loaded");
+              this._interstitialAd = ad;
+
+              this._interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+                onAdShowedFullScreenContent: (InterstitialAd ad) =>
+                    print('$ad onAdShowedFullScreenContent.'),
+                onAdDismissedFullScreenContent: (InterstitialAd ad) {
+                  print('$ad onAdDismissedFullScreenContent.');
+                  ad.dispose();
+                },
+                onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+                  print('$ad onAdFailedToShowFullScreenContent: $error');
+                  ad.dispose();
+                  // this._interstitialAd = null;
+                },
+                onAdImpression: (InterstitialAd ad) => print('$ad impression occurred.'),
+              );
+            },
+            onAdFailedToLoad: (LoadAdError error) =>
+                print('Interstitial failed to load: $error')));
+  }
+
   Future getData() async {
     isLoading = true;
     storyData = await StoryDetailScreenService(
@@ -109,7 +170,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
       // debugPrint("story data to store : ${this.storyToStore}", wrapWidth: 1024);
     });
     await getStoryDataToStore();
-    print("story author ${this.storyToStore["author"]}");
+    // print("story author ${this.storyToStore["author"]}");
   }
 
   @override
@@ -165,10 +226,16 @@ class _ReadingScreenState extends State<ReadingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     IconButton(
-                      onPressed: () {
+                      onPressed: currentChapterNumber == 1? null :  () {
                         print("user wants to go back");
                         setState(() {
                           currentChapterNumber--;
+                          if(this.currentChapterNumber % 3 == 0 && this.currentChapterNumber != 1){
+                            print("this divides 3 and will show ad now");
+                            this._interstitialAd.show();
+                            loadInterstitialAd();
+
+                          }
                           getData();
                         });
                       },
@@ -215,10 +282,17 @@ class _ReadingScreenState extends State<ReadingScreen> {
                       ),
                     ),
                     IconButton(
-                      onPressed: () {
-                        print("user wants to read next");
+                      onPressed: currentChapterNumber == widget.chaptersCount? null : () {
                         setState(() {
                           currentChapterNumber++;
+                          print("user wants to read next with chapter $currentChapterNumber");
+
+                          if(this.currentChapterNumber % 3 == 0){
+                            print("this divides 3 and will show ad now");
+                            this._interstitialAd.show();
+                            loadInterstitialAd();
+
+                          }
                           getData();
                         });
                       },

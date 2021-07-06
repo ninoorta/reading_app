@@ -36,9 +36,9 @@ class ExploreScreenService {
   }
 
   Future getListDetailData(
-      {required int offset, required String sortType}) async {
+      {required int offset, required String sortType, required int limit}) async {
     http.Response response = await http.get(Uri.parse(
-        "http://api.noveltyt.net/api/v2/stories/list?limit=36&offset=$offset&sort=$sortType"));
+        "http://api.noveltyt.net/api/v2/stories/list?limit=$limit&offset=$offset&sort=$sortType"));
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       return data["data"];

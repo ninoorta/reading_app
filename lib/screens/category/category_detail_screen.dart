@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:reading_app/ads/ad_state.dart';
 import 'package:reading_app/screens/category/components/tabBar_content/most_favorite_content.dart';
 import 'package:reading_app/screens/category/components/tabBar_content/most_view_content.dart';
+
 // services
 import 'package:reading_app/services/category_detail_screen_service.dart';
 
@@ -45,6 +48,10 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
 
   ScrollController _scrollController = ScrollController();
 
+  late BannerAd myBannerAd;
+
+  // bool isBannerAdAlready = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -82,6 +89,8 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
   }
 
   Future getMoreData() async {
+    print("start to get more data from category detail screen");
+
     this.isLoadingMore = true;
     var nextOffset;
 
@@ -108,15 +117,20 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
 
       if (tabIndex == 0) {
         newPublishData = newPublishData + apiResult;
+
+
       }
       if (tabIndex == 1) {
         newUpdatedData = newUpdatedData + apiResult;
+
       }
       if (tabIndex == 2) {
         mostViewData = mostViewData + apiResult;
+
       }
       if (tabIndex == 3) {
         mostFavoriteData = mostFavoriteData + apiResult;
+
       }
 
       this.isLoadingMore = false;
@@ -222,11 +236,11 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen>
           child: TabBarView(
             controller: _tabController,
             children: <Widget>[
-              NewUpdateContent(
+              NewPublishContent(
                   selectedGenre: widget.selectedGenre,
                   sortType: sort[0],
                   limitItem: limitItem),
-              NewPublishContent(
+              NewUpdateContent(
                   selectedGenre: widget.selectedGenre,
                   sortType: sort[1],
                   limitItem: limitItem),

@@ -7,17 +7,19 @@ class AdState {
 
   AdState({required this.initialization});
 
-  String get bannerAdUnitID {
+  static String get bannerAdUnitID {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-2370992620174620/2482308784';
-    } else {
+      return 'ca-app-pub-3940256099942544/6300978111';
+    } else if(Platform.isIOS) {
       return "ios ad unit id";
+    } else {
+      throw new UnsupportedError("Unsupported platform");
     }
   }
 
-  final BannerAdListener listener = BannerAdListener(
+  static final BannerAdListener listener = BannerAdListener(
     // Called when an ad is successfully received.
-    onAdLoaded: (Ad ad) => print('Ad loaded.'),
+    onAdLoaded: (Ad ad) => print('Ad loaded. $ad'),
     // Called when an ad request failed.
     onAdFailedToLoad: (Ad ad, LoadAdError error) {
       // Dispose the ad here to free resources.
@@ -31,4 +33,15 @@ class AdState {
     // Called when an impression occurs on the ad.
     onAdImpression: (Ad ad) => print('Ad impression.'),
   );
+
+  static String get interstitialAdUnitID {
+    if(Platform.isAndroid){
+      return 'ca-app-pub-3940256099942544/1033173712';
+    } else if(Platform.isIOS) {
+      return 'ios ad unit id';
+    } else {
+      throw new UnsupportedError("Unsupported platform");
+    }
+  }
+
 }

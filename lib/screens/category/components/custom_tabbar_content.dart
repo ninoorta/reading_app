@@ -39,6 +39,7 @@ class CustomTabBarContent extends StatelessWidget {
                       ? MyCustomTileSkeleton()
                       : MyCustomTile(
                           currentItemData: currentItem,
+                          index: index,
                         );
                 },
               ),
