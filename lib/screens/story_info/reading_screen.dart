@@ -358,7 +358,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
                                     fontSize: 20),
                               ),
                             ),
-                            Html(data: chapterContent, style: {
+                            SelectableHtml(data: chapterContent, style: {
                               "body": Style(
                                   color: Colors.black,
                                   fontSize: FontSize.rem(1.15))

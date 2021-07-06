@@ -128,7 +128,7 @@ class CustomTile extends StatelessWidget {
                   child: CachedNetworkImage(
                       imageUrl: currentItem["cover"],
                       height: 120,
-                      width: 90,
+                      width: 100,
                       fit: BoxFit.cover,
                       errorWidget: (context, url, error) {
                         return SkeletonAnimation(

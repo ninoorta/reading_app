@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class SearchScreenService {
-  Future getData({required String keyword, required int offset}) async {
+  Future getData({required String keyword, required int offset, required int limit}) async {
     print("offest $offset");
     http.Response response = await http.get(Uri.parse(
         // \"Tru%20ti%C3%AAn\"
-        "http://api.noveltyt.net/api/v2/stories/list?keyword=$keyword&limit=36&offset=$offset"));
+        "http://api.noveltyt.net/api/v2/stories/list?keyword=$keyword&limit=$limit&offset=$offset"));
 
     print(
-        "http://api.noveltyt.net/api/v2/stories/list?keyword=$keyword&limit=36&offset=$offset");
+        "http://api.noveltyt.net/api/v2/stories/list?keyword=$keyword&limit=$limit&offset=$offset");
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       return data["data"];
