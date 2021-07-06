@@ -101,9 +101,8 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
       this.dataList = this.dataList + apiResult;
 
       for (var i = offset; i < this.dataList.length; i++) {
-        if (i % 6 == 0) {
-          if(this.dataList[i] is BannerAd){
-
+        if (i % 8 == 0) {
+          if (this.dataList[i] is BannerAd) {
           } else {
             print("insert ad in index: $i");
             print("this title ${this.dataList[i]["title"]}");
@@ -117,7 +116,6 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                   ..load());
           }
           i++;
-
         }
       }
 
@@ -126,13 +124,36 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
   }
 
   Future getData() async {
+    print("current sortType $sortType");
+
+    setState(() {
+      this.offset = 0;
+    });
     this.isLoading = true;
     var apiResult = await ExploreScreenService()
-        .getListDetailData(offset: offset, sortType: sortType, limit: limit );
+        .getListDetailData(offset: offset, sortType: sortType, limit: limit);
 
     setState(() {
       this.dataList = apiResult;
 
+      print("start to run a loop for");
+      for (var i = this.offset; i < this.dataList.length; i++) {
+        if (i % 8 == 0 && i != 0) {
+          print("divide 8 ok");
+          if (this.dataList[i] is BannerAd) {
+          } else {
+            this.dataList.insert(
+                i,
+                BannerAd(
+                    adUnitId: AdState.bannerAdUnitID,
+                    size: AdSize.smartBanner,
+                    listener: AdState.listener,
+                    request: AdRequest())..load());
+          }
+          i++;
+        }
+      }
+      print("end the loop for");
       this.isLoading = false;
     });
   }
@@ -145,6 +166,23 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
     setState(() {
       this.dataList = apiResult;
 
+      for (var i = this.offset; i < this.dataList.length; i++) {
+        if (i % 8 == 0 && i != 0) {
+          print("divide 8 ok");
+          if (this.dataList[i] is BannerAd) {
+          } else {
+            this.dataList.insert(
+                i,
+                BannerAd(
+                    adUnitId: AdState.bannerAdUnitID,
+                    size: AdSize.smartBanner,
+                    listener: AdState.listener,
+                    request: AdRequest())..load());
+          }
+          i++;
+        }
+      }
+
       this.isLoading = false;
     });
   }
@@ -156,6 +194,23 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
 
     setState(() {
       this.dataList = apiResult;
+
+      for (var i = this.offset; i < this.dataList.length; i++) {
+        if (i % 8 == 0 && i != 0) {
+          print("divide 8 ok");
+          if (this.dataList[i] is BannerAd) {
+          } else {
+            this.dataList.insert(
+                i,
+                BannerAd(
+                    adUnitId: AdState.bannerAdUnitID,
+                    size: AdSize.smartBanner,
+                    listener: AdState.listener,
+                    request: AdRequest())..load());
+          }
+          i++;
+        }
+      }
       this.isLoading = false;
     });
   }
@@ -185,11 +240,10 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                       actions: [
                         CupertinoActionSheetAction(
                             onPressed: () {
-                              print("Mới nhất");
-
+                              print("Mới đăng");
                               setState(() {
                                 sortType = "created";
-                                sortName = "Mới Nhất";
+                                sortName = "Mới Đăng";
                                 this.getData();
                                 Navigator.pop(context);
                               });
@@ -291,11 +345,6 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                   scrollDirection: Axis.vertical,
                   child: Column(
                     children: [
-                      SizedBox(
-                          height: 50,
-                          child: this.isBannerAdAlready
-                              ? AdWidget(key: Key("First one"),ad: myBannerAd)
-                              : null),
                       Container(
                         color: Colors.white,
                         padding: EdgeInsets.symmetric(horizontal: 15.0),
@@ -310,9 +359,16 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                             if (currentItem is BannerAd) {
                               print("it's bannerAd");
                               return Container(
-                                  height: 70, child: AdWidget(ad: currentItem));
+                                  height: 70,
+                                  child: AdWidget(
+                                    ad: currentItem,
+                                    key: Key(index.toString()),
+                                  ));
                             } else {
-                              return CustomTile(currentItem: currentItem, key: Key(index.toString()),);
+                              return CustomTile(
+                                currentItem: currentItem,
+                                key: Key(index.toString()),
+                              );
                             }
                           },
                         ),

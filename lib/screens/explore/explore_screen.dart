@@ -126,12 +126,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     SizedBox(
-                      width: MediaQuery.of(context).size.width - 30,
-                      height: 100,
+                      // width: MediaQuery.of(context).size.width - 30,
+                      height: 50,
                       child: !isBannerAdAlready
                           ? Container()
-                          : AdWidget(
-                              ad: myBannerAd,
+                          : Container(
+                              child: AdWidget(
+                                ad: myBannerAd,
+                              ),
                             ),
                     ),
                     CustomListView(
