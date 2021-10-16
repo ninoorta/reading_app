@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:reading_app/ads/ad_state.dart';
+
 // services
 import 'package:reading_app/services/category_detail_screen_service.dart';
 
@@ -51,6 +54,7 @@ class _NewPublishContentState extends State<NewPublishContent> {
   }
 
   Future getMoreData() async {
+    print("run get more data in new publish content tab");
     this.isLoadingMore = true;
     nextOffset = nextOffset + widget.limitItem;
     var apiResult = await CategoryDetailScreenService().getData(
@@ -61,6 +65,24 @@ class _NewPublishContentState extends State<NewPublishContent> {
 
     setState(() {
       tabData = tabData + apiResult;
+      for (var i = nextOffset; i < this.tabData.length; i++) {
+        if (i % 6 == 0) {
+          if (this.tabData[i] is BannerAd) {
+          } else {
+            print("/ 6, index: $i");
+            this.tabData.insert(
+                i,
+                BannerAd(
+                    adUnitId: AdState.bannerAdUnitID,
+                    size: AdSize.smartBanner,
+                    request: AdRequest(),
+                    listener: AdState.listener)
+                  ..load());
+          }
+        }
+
+        i++;
+      }
       this.isLoadingMore = false;
     });
   }
@@ -103,6 +125,7 @@ class _NewPublishContentState extends State<NewPublishContent> {
                         ? MyCustomTileSkeleton()
                         : MyCustomTile(
                             currentItemData: tabData[index],
+                            index: index,
                           );
                   },
                 ),

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:reading_app/screens/story_info/story_info.dart';
 import 'package:reading_app/utilities/time.dart';
@@ -11,7 +12,7 @@ import '../../../constants.dart';
 class CustomTile extends StatelessWidget {
   const CustomTile({Key? key, required this.currentItem}) : super(key: key);
 
-  final Map currentItem;
+  final  currentItem;
 
   List<TextSpan> renderGenreWidget({required List genreList}) {
     List<TextSpan> list = [];
@@ -48,7 +49,12 @@ class CustomTile extends StatelessWidget {
               withNavBar: false,
               pageTransitionAnimation: PageTransitionAnimation.cupertino);
         },
-        child: Container(
+        child: this.currentItem is BannerAd ? Container(
+          height: 50,
+          child: AdWidget(
+            ad: this.currentItem,
+          ),
+        ) : Container(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +128,7 @@ class CustomTile extends StatelessWidget {
                   child: CachedNetworkImage(
                       imageUrl: currentItem["cover"],
                       height: 120,
-                      width: 90,
+                      width: 100,
                       fit: BoxFit.cover,
                       errorWidget: (context, url, error) {
                         return SkeletonAnimation(

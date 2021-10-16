@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class SearchScreenService {
-  Future getData({required String keyword, required int offset}) async {
+  Future getData({required String keyword, required int offset, required int limit}) async {
     print("offest $offset");
     http.Response response = await http.get(Uri.parse(
         // \"Tru%20ti%C3%AAn\"
-        "http://api.noveltyt.net/api/v2/stories/list?keyword=$keyword&limit=36&offset=$offset"));
+        "http://api.noveltyt.net/api/v2/stories/list?keyword=$keyword&limit=$limit&offset=$offset"));
 
     print(
-        "http://api.noveltyt.net/api/v2/stories/list?keyword=$keyword&limit=36&offset=$offset");
+        "http://api.noveltyt.net/api/v2/stories/list?keyword=$keyword&limit=$limit&offset=$offset");
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       return data["data"];
@@ -22,6 +22,7 @@ class SearchScreenService {
 
   Future getFilterData(
       {required int offset,
+        required int limit,
       required int full,
       required int maxChapter,
       required int minChapter,
@@ -33,21 +34,21 @@ class SearchScreenService {
     if (full == 2) {
       if (genres.isEmpty) {
         apiURL =
-            "http://api.noveltyt.net/api/v2/stories/filter?limit=36&max_chapter_count=$maxChapter&min_chapter_count=$minChapter&offset=$offset&sort=$sortType";
+            "http://api.noveltyt.net/api/v2/stories/filter?limit=$limit&max_chapter_count=$maxChapter&min_chapter_count=$minChapter&offset=$offset&sort=$sortType";
       } else {
         listToString = convertListToString(genres);
         apiURL =
-            "http://api.noveltyt.net/api/v2/stories/filter?genre=$listToString&limit=36&max_chapter_count=$maxChapter&min_chapter_count=$minChapter&offset=$offset&sort=$sortType";
+            "http://api.noveltyt.net/api/v2/stories/filter?genre=$listToString&limit=$limit&max_chapter_count=$maxChapter&min_chapter_count=$minChapter&offset=$offset&sort=$sortType";
       }
     } else {
       print(genres.isEmpty);
       if (genres.isEmpty) {
         apiURL =
-            "http://api.noveltyt.net/api/v2/stories/filter?limit=36&max_chapter_count=$maxChapter&min_chapter_count=$minChapter&offset=$offset&sort=$sortType&full=$full";
+            "http://api.noveltyt.net/api/v2/stories/filter?limit=$limit&max_chapter_count=$maxChapter&min_chapter_count=$minChapter&offset=$offset&sort=$sortType&full=$full";
       } else {
         listToString = convertListToString(genres);
         apiURL =
-            "http://api.noveltyt.net/api/v2/stories/filter?genre=$listToString&limit=36&max_chapter_count=$maxChapter&min_chapter_count=$minChapter&offset=$offset&sort=$sortType&full=$full";
+            "http://api.noveltyt.net/api/v2/stories/filter?genre=$listToString&limit=$limit&max_chapter_count=$maxChapter&min_chapter_count=$minChapter&offset=$offset&sort=$sortType&full=$full";
       }
     }
 
