@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Truyện Gemmob',
+      title: 'Truyện Hay',
       debugShowCheckedModeBanner: false,
       // theme: ThemeData(
       //   primarySwatch: Colors.blue,

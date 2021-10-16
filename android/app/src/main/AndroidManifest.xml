@@ -27,7 +27,7 @@
             <meta-data
               android:name="io.flutter.embedding.android.SplashScreenDrawable"
               android:resource="@drawable/launch_background"
-              />
+               />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -40,6 +40,6 @@
             android:value="2" />
        <meta-data
            android:name="com.google.android.gms.ads.APPLICATION_ID"
-           android:value="ca-app-pub-8875774011985639~1653702023"/>
+           android:value="ca-app-pub-2370992620174620~4611927842"/>
     </application>
 </manifest>

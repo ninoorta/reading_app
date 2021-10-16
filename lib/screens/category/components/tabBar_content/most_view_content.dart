@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:reading_app/ads/ad_state.dart';
 // services
 import 'package:reading_app/services/category_detail_screen_service.dart';
 
@@ -63,24 +61,6 @@ class _MostViewContentState extends State<MostViewContent> {
 
     setState(() {
       tabData = tabData + apiResult;
-      for (var i = nextOffset; i < this.tabData.length; i++) {
-        if (i % 6 == 0) {
-          if (this.tabData[i] is BannerAd) {
-          } else {
-            print("/ 6, index: $i");
-            this.tabData.insert(
-                i,
-                BannerAd(
-                    adUnitId: AdState.bannerAdUnitID,
-                    size: AdSize.smartBanner,
-                    request: AdRequest(),
-                    listener: AdState.listener)
-                  ..load());
-          }
-        }
-
-        i++;
-      }
       this.isLoadingMore = false;
     });
   }
@@ -123,7 +103,7 @@ class _MostViewContentState extends State<MostViewContent> {
                         ? MyCustomTileSkeleton()
                         : MyCustomTile(
                             currentItemData: tabData[index],
-                      index: index,
+                            index: index,
                           );
                   },
                 ),

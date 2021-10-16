@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:reading_app/ads/ad_state.dart';
 import 'package:reading_app/constants.dart';
 import 'package:reading_app/screens/search/filter_screen.dart';
 import 'package:reading_app/services/search_screen_service.dart';
@@ -28,30 +26,8 @@ class _SearchScreenState extends State<SearchScreen> {
   TextEditingController _textEditingController = TextEditingController();
   ScrollController _scrollController = ScrollController();
 
-  late BannerAd myBannerAd;
-  bool isBannerAdAlready = false;
   void initState() {
     super.initState();
-
-    myBannerAd = BannerAd(
-        adUnitId: AdState.bannerAdUnitID,
-        size: AdSize.smartBanner,
-        request: AdRequest(),
-        listener: BannerAdListener(onAdClosed: (ad) {
-          print("Closed Ad $ad");
-        }, onAdOpened: (ad) {
-          print("Opened Ad $ad");
-        }, onAdLoaded: (ad) {
-          print("ad loaded  $ad");
-          setState(() {
-            this.isBannerAdAlready = true;
-          });
-        }, onAdFailedToLoad: (ad, error) {
-          print('Ad failed to load with error: $error');
-          ad.dispose();
-        }));
-
-    myBannerAd.load();
 
     _scrollController.addListener(() {
       if (_scrollController.position.atEdge) {
@@ -73,34 +49,15 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       offset = offset + 36;
     });
-    var apiResult =
-        await SearchScreenService().getData(keyword: userInput, offset: offset, limit: limit);
+    var apiResult = await SearchScreenService()
+        .getData(keyword: userInput, offset: offset, limit: limit);
 
     setState(() {
-
-      searchResultList = apiResult.isNotEmpty? searchResultList + apiResult: searchResultList;
-
+      searchResultList = apiResult.isNotEmpty
+          ? searchResultList + apiResult
+          : searchResultList;
       print("current offset");
-      for (var i = offset; i < this.searchResultList.length; i++) {
-        if (i % 6 == 0) {
-          if(this.searchResultList[i] is BannerAd){
 
-          } else {
-            print("insert ad in index: $i");
-            print("this title ${this.searchResultList[i]["title"]}");
-            this.searchResultList.insert(
-                i,
-                BannerAd(
-                    adUnitId: AdState.bannerAdUnitID,
-                    size: AdSize.smartBanner,
-                    request: AdRequest(),
-                    listener: AdState.listener)
-                  ..load());
-          }
-          i++;
-
-        }
-      }
       this.isLoadingMore = false;
     });
   }
@@ -119,28 +76,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
         haveData = searchResultList.isNotEmpty ? true : false;
 
-        if(haveData){
-          for (var i = offset; i < this.searchResultList.length; i++) {
-            if (i % 6 == 0) {
-              if(this.searchResultList[i] is BannerAd){
-
-              } else {
-                print("insert ad in index: $i");
-                print("this title ${this.searchResultList[i]["title"]}");
-                this.searchResultList.insert(
-                    i,
-                    BannerAd(
-                        adUnitId: AdState.bannerAdUnitID,
-                        size: AdSize.smartBanner,
-                        request: AdRequest(),
-                        listener: AdState.listener)
-                      ..load());
-              }
-              i++;
-
-            }
-          }
-        }
+        if (haveData) {}
 
         // debugPrint("search result $searchResultList", wrapWidth: 1024);
         this.isLoading = false;
@@ -276,7 +212,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                         ? Container(
                                             child: Text(
                                               "Không có kết quả tìm kiếm.",
-                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                             padding:
                                                 EdgeInsets.only(bottom: 20),

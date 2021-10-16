@@ -48,7 +48,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
     myBannerAd = BannerAd(
       adUnitId: AdState.bannerAdUnitID,
-      size: AdSize.smartBanner,
+      size: AdSize.fullBanner,
       request: AdRequest(),
       listener: BannerAdListener(onAdClosed: (ad) {
         print("Closed Ad $ad");
@@ -67,7 +67,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
     myBannerAd.load();
 
-    // remember to try for native ad later.
     getData();
   }
 
@@ -94,7 +93,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Truyện Gemmob",
+          "Truyện Hay",
           style: kTitleTextStyle,
         ),
         centerTitle: true,
@@ -127,7 +126,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   children: [
                     SizedBox(
                       // width: MediaQuery.of(context).size.width - 30,
-                      height: 50,
+                      height: 60,
                       child: !isBannerAdAlready
                           ? Container()
                           : Container(
@@ -151,10 +150,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       listData: recentUpdatedStories,
                       isNewPublish: false,
                     ),
-                    // later
-                    // CustomListView(
-                    //     listName: "Truyện đọc gần đây", isLoading: isLoading),
-                    // later
                     Column(
                       children: [
                         Row(
@@ -299,106 +294,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             );
                           },
                         ),
-                        // SizedBox(
-                        //   height: 5.0,
-                        // ),
-                        // SizedBox(
-                        //   height: 300,
-                        //   child: GridView.builder(
-                        //     shrinkWrap: true,
-                        //     physics: NeverScrollableScrollPhysics(),
-                        //     gridDelegate:
-                        //         SliverGridDelegateWithFixedCrossAxisCount(
-                        //             crossAxisCount: 1,
-                        //             mainAxisExtent: 65,
-                        //             crossAxisSpacing: 0.0,
-                        //             mainAxisSpacing: 0.0),
-                        //     itemCount: otherList.length,
-                        //     itemBuilder: (context, index) {
-                        //       var currentItem = otherList[index];
-                        //       var currentItemID = currentItem["_id"]["\$oid"];
-                        //       var currentItemTitle = currentItem["title"];
-                        //       return Column(
-                        //         mainAxisAlignment: MainAxisAlignment.start,
-                        //         // crossAxisAlignment: CrossAxisAlignment.stretch,
-                        //         children: [
-                        //           GestureDetector(
-                        //             child: Container(
-                        //               child: Row(
-                        //                 mainAxisAlignment:
-                        //                     MainAxisAlignment.spaceBetween,
-                        //                 crossAxisAlignment:
-                        //                     CrossAxisAlignment.center,
-                        //                 children: [
-                        //                   Expanded(
-                        //                     flex: 4,
-                        //                     child: RichText(
-                        //                         maxLines: 2,
-                        //                         overflow: TextOverflow.ellipsis,
-                        //                         text: TextSpan(children: [
-                        //                           new TextSpan(
-                        //                               text:
-                        //                                   currentItem["title"],
-                        //                               style: TextStyle(
-                        //                                   color: Colors.black,
-                        //                                   fontSize: 15))
-                        //                         ])),
-                        //                   ),
-                        //                   Expanded(
-                        //                     flex: 1,
-                        //                     child: IconButton(
-                        //                       onPressed: () {
-                        //                         print("move to $currentItemID");
-                        //
-                        //                         pushNewScreen(context,
-                        //                             screen: OtherGroupScreen(
-                        //                                 groupID: currentItemID,
-                        //                                 groupTitle:
-                        //                                     currentItemTitle),
-                        //                             withNavBar: true,
-                        //                             pageTransitionAnimation:
-                        //                                 PageTransitionAnimation
-                        //                                     .cupertino);
-                        //                       },
-                        //                       icon:
-                        //                           Icon(Icons.arrow_forward_ios),
-                        //                       padding: EdgeInsets.zero,
-                        //                       color: Colors.grey[500],
-                        //                       iconSize: 20,
-                        //                     ),
-                        //                   )
-                        //                 ],
-                        //               ),
-                        //             ),
-                        //             onTap: () {
-                        //               print("move to $currentItemID");
-                        //               pushNewScreen(context,
-                        //                   screen: OtherGroupScreen(
-                        //                       groupID: currentItemID,
-                        //                       groupTitle: currentItemTitle),
-                        //                   withNavBar: true,
-                        //                   pageTransitionAnimation:
-                        //                       PageTransitionAnimation
-                        //                           .cupertino);
-                        //             },
-                        //           ),
-                        //           index != otherList.length - 1
-                        //               ? Divider(
-                        //                   color: Colors.grey[500],
-                        //                   thickness: 0.75,
-                        //                   height: 2,
-                        //                 )
-                        //               : SizedBox(
-                        //                   height: 0.0,
-                        //                 )
-                        //         ],
-                        //       );
-                        //     },
-                        //   ),
-                        // ),
-                        // SizedBox(
-                        //   height: 15.0,
-                        // )
                       ],
                     )
                   ],

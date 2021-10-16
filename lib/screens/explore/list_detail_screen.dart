@@ -41,7 +41,7 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
 
     myBannerAd = BannerAd(
         adUnitId: AdState.bannerAdUnitID,
-        size: AdSize.smartBanner,
+        size: AdSize.fullBanner,
         request: AdRequest(),
         listener: BannerAdListener(onAdClosed: (ad) {
           print("Closed Ad $ad");
@@ -86,12 +86,10 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
 
     print("change dependencies");
   }
-  
-  void showLoading() {
-  }
+
+  void showLoading() {}
 
   Future getMoreData() async {
-    
     setState(() {
       this.isLoadingMore = true;
       // limit 20
@@ -104,25 +102,6 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
 
     setState(() {
       this.dataList = this.dataList + apiResult;
-
-      for (var i = offset; i < this.dataList.length; i++) {
-        if (i % 8 == 0) {
-          if (this.dataList[i] is BannerAd) {
-          } else {
-            print("insert ad in index: $i");
-            print("this title ${this.dataList[i]["title"]}");
-            this.dataList.insert(
-                i,
-                BannerAd(
-                    adUnitId: AdState.bannerAdUnitID,
-                    size: AdSize.smartBanner,
-                    request: AdRequest(),
-                    listener: AdState.listener)
-                  ..load());
-          }
-          i++;
-        }
-      }
       this.isLoadingMore = false;
     });
   }
@@ -140,24 +119,6 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
     setState(() {
       this.dataList = apiResult;
 
-      print("start to run a loop for");
-      for (var i = this.offset; i < this.dataList.length; i++) {
-        if (i % 8 == 0 && i != 0) {
-          print("divide 8 ok");
-          if (this.dataList[i] is BannerAd) {
-          } else {
-            this.dataList.insert(
-                i,
-                BannerAd(
-                    adUnitId: AdState.bannerAdUnitID,
-                    size: AdSize.smartBanner,
-                    listener: AdState.listener,
-                    request: AdRequest())..load());
-          }
-          i++;
-        }
-      }
-      print("end the loop for");
       this.isLoading = false;
     });
   }
@@ -169,24 +130,6 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
 
     setState(() {
       this.dataList = apiResult;
-
-      for (var i = this.offset; i < this.dataList.length; i++) {
-        if (i % 8 == 0 && i != 0) {
-          print("divide 8 ok");
-          if (this.dataList[i] is BannerAd) {
-          } else {
-            this.dataList.insert(
-                i,
-                BannerAd(
-                    adUnitId: AdState.bannerAdUnitID,
-                    size: AdSize.smartBanner,
-                    listener: AdState.listener,
-                    request: AdRequest())..load());
-          }
-          i++;
-        }
-      }
-
       this.isLoading = false;
     });
   }
@@ -198,23 +141,6 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
 
     setState(() {
       this.dataList = apiResult;
-
-      for (var i = this.offset; i < this.dataList.length; i++) {
-        if (i % 8 == 0 && i != 0) {
-          print("divide 8 ok");
-          if (this.dataList[i] is BannerAd) {
-          } else {
-            this.dataList.insert(
-                i,
-                BannerAd(
-                    adUnitId: AdState.bannerAdUnitID,
-                    size: AdSize.smartBanner,
-                    listener: AdState.listener,
-                    request: AdRequest())..load());
-          }
-          i++;
-        }
-      }
       this.isLoading = false;
     });
   }
@@ -349,31 +275,36 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                   scrollDirection: Axis.vertical,
                   child: Column(
                     children: [
+                      Container(height: 60, child: AdWidget(ad: myBannerAd)),
                       Container(
                         color: Colors.white,
                         padding: EdgeInsets.symmetric(horizontal: 15.0),
-                        // margin: EdgeInsets.only(bottom: 20),
+                        margin: EdgeInsets.only(bottom: 20),
                         child: ListView.builder(
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: dataList.length,
                           itemBuilder: (context, index) {
                             var currentItem = dataList[index];
+                            return CustomTile(
+                              currentItem: currentItem,
+                              key: Key(index.toString()),
+                            );
                             // debugPrint("current Item $currentItem", wrapWidth: 1024);
-                            if (currentItem is BannerAd) {
-                              print("it's bannerAd");
-                              return Container(
-                                  height: 70,
-                                  child: AdWidget(
-                                    ad: currentItem,
-                                    key: Key(index.toString()),
-                                  ));
-                            } else {
-                              return CustomTile(
-                                currentItem: currentItem,
-                                key: Key(index.toString()),
-                              );
-                            }
+                            // if (currentItem is BannerAd) {
+                            //   print("it's bannerAd");
+                            //   return Container(
+                            //       height: 70,
+                            //       child: AdWidget(
+                            //         ad: currentItem,
+                            //         key: Key(index.toString()),
+                            //       ));
+                            // } else {
+                            //   return CustomTile(
+                            //     currentItem: currentItem,
+                            //     key: Key(index.toString()),
+                            //   );
+                            // }
                           },
                         ),
                       ),

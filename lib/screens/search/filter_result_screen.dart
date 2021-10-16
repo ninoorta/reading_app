@@ -44,7 +44,7 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
 
     myBannerAd = BannerAd(
         adUnitId: AdState.bannerAdUnitID,
-        size: AdSize.smartBanner,
+        size: AdSize.fullBanner,
         request: AdRequest(),
         listener: BannerAdListener(onAdClosed: (ad) {
           print("Closed Ad $ad");
@@ -104,32 +104,14 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
       resultData = resultData + apiResult;
       print("current offset $DiagnosticLevel.off");
       var startIndex = this.offset;
-      if(this.offset > this.resultData.length){
-        if(this.resultData.length == 36){
+      if (this.offset > this.resultData.length) {
+        if (this.resultData.length == 36) {
           startIndex = 0;
         } else {
-          startIndex = ( (this.resultData.length ~/ 36)  - 1) * 36;
+          startIndex = ((this.resultData.length ~/ 36) - 1) * 36;
         }
+      }
 
-      }
-      for (var i = startIndex; i < this.resultData.length; i++) {
-        if (i % 6 == 0) {
-          if (this.resultData[i] is BannerAd) {
-          } else {
-            print("insert ad in index: $i");
-            print("this title ${this.resultData[i]["title"]}");
-            this.resultData.insert(
-                i,
-                BannerAd(
-                    adUnitId: AdState.bannerAdUnitID,
-                    size: AdSize.smartBanner,
-                    request: AdRequest(),
-                    listener: AdState.listener)
-                  ..load());
-          }
-          i++;
-        }
-      }
       this.isLoadingMore = false;
     });
   }
@@ -152,26 +134,8 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
       if (resultData.isNotEmpty) {
         print("run to isNotEmpty, current offset $offset");
         var startIndex = this.offset;
-        if(offset > this.resultData.length){
+        if (offset > this.resultData.length) {
           startIndex = 0;
-        }
-        for (var i = startIndex; i < this.resultData.length; i++) {
-          if (i % 6 == 0) {
-            if (this.resultData[i] is BannerAd) {
-            } else {
-              print("insert ad in index: $i");
-              print("this title ${this.resultData[i]["title"]}");
-              this.resultData.insert(
-                  i,
-                  BannerAd(
-                      adUnitId: AdState.bannerAdUnitID,
-                      size: AdSize.smartBanner,
-                      request: AdRequest(),
-                      listener: AdState.listener)
-                    ..load());
-            }
-            i++;
-          }
         }
       }
 
@@ -318,7 +282,8 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
                                 ),
                               ),
                             )
-                          : Container(),
+                          : Container(
+                              height: 60, child: AdWidget(ad: myBannerAd)),
                   ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
